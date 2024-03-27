@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/views/dashboard_view.dart';
+import 'package:frontend/views/register_view.dart'; // Import the RegisterView
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -80,6 +81,22 @@ class _LoginViewState extends State<LoginView> {
               _errorMessage,
               style: const TextStyle(
                 color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            TextButton(
+              onPressed: () {
+                // Navigate to the registration page
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RegisterView()),
+                );
+              },
+              child: const Text(
+                "Don't you have an account? Register here",
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
               ),
             ),
           ],

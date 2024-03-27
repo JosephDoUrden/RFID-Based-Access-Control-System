@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginView(), // Uygulama başlangıç sayfası
+      debugShowCheckedModeBanner: false,
+      home: const LoginView(), // Uygulama başlangıç sayfası
     );
   }
 }
