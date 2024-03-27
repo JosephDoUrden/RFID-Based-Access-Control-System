@@ -14,6 +14,7 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String _errorMessage = '';
+  bool _isObscure = true; // Initially, the password is obscured
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +43,20 @@ class _LoginViewState extends State<LoginView> {
             const SizedBox(height: 20.0),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Password',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.lock),
+                suffixIcon: IconButton(
+                  icon: _isObscure ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _isObscure = !_isObscure; // Toggle the password visibility
+                    });
+                  },
+                ),
               ),
-              obscureText: true,
+              obscureText: _isObscure, // Toggle the obscure text based on state
             ),
             const SizedBox(height: 20.0),
             ElevatedButton(

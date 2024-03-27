@@ -17,6 +17,7 @@ class _RegisterViewState extends State<RegisterView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String _errorMessage = '';
+  bool _isPasswordObscured = true;
 
   @override
   Widget build(BuildContext context) {
@@ -68,21 +69,29 @@ class _RegisterViewState extends State<RegisterView> {
             const SizedBox(height: 20.0),
             TextField(
               controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: _isPasswordObscured,
+              decoration: InputDecoration(
                 hintText: 'Password',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordObscured = !_isPasswordObscured;
+                    });
+                  },
+                  icon: Icon(
+                    _isPasswordObscured ? Icons.visibility_off : Icons.visibility,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () async {
-                // Reset error message
                 setState(() {
                   _errorMessage = '';
                 });
 
-                // Check if any input field is empty
                 if (_usernameController.text.isEmpty ||
                     _firstnameController.text.isEmpty ||
                     _lastnameController.text.isEmpty ||
@@ -91,7 +100,7 @@ class _RegisterViewState extends State<RegisterView> {
                   setState(() {
                     _errorMessage = 'All fields are required.';
                   });
-                  return; // Stop registration process if any field is empty
+                  return;
                 }
 
                 bool registered = await AuthController.register(
@@ -102,13 +111,11 @@ class _RegisterViewState extends State<RegisterView> {
                   _passwordController.text,
                 );
                 if (registered) {
-                  // Navigate to login page upon successful registration
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const DashboardView()),
                   );
                 } else {
-                  // Show error message
                   setState(() {
                     _errorMessage = 'Registration failed. Please try again.';
                   });
@@ -134,7 +141,6 @@ class _RegisterViewState extends State<RegisterView> {
             const SizedBox(height: 10.0),
             TextButton(
               onPressed: () {
-                // Navigate back to the login page
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const LoginView()),
