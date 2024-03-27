@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/controllers/auth_controller.dart';
-import 'package:frontend/views/dashboard_view.dart';
 import 'package:frontend/views/login_view.dart';
 
 class RegisterView extends StatefulWidget {
@@ -113,7 +112,7 @@ class _RegisterViewState extends State<RegisterView> {
                 if (registered) {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const DashboardView()),
+                    MaterialPageRoute(builder: (context) => const LoginView()),
                   );
                 } else {
                   setState(() {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController {
   static Future<bool> register(
@@ -38,7 +39,19 @@ class AuthController {
     );
 
     if (response.statusCode == 200) {
-      return true; // Giriş başarılı ise true döner
+      // Parse the response body
+      Map<String, dynamic> data = jsonDecode(response.body);
+      // Extract token from the response
+      String? token = data['token'];
+
+      if (token != null) {
+        // Store the token using shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+        return true; // Giriş başarılı ise true döner
+      } else {
+        return false; // Token alınamadıysa giriş başarısız olarak işaretlenir
+      }
     } else {
       return false; // Giriş başarısız ise false döner
     }
