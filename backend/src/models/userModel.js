@@ -3,11 +3,18 @@ const bcrypt = require("bcryptjs");
 
 const UserModel = {};
 
-UserModel.createUser = (username, password, callback) => {
+UserModel.createUser = (
+  username,
+  firstname,
+  lastname,
+  email,
+  password,
+  callback
+) => {
   const hashedPassword = bcrypt.hashSync(password, 8);
   connection.query(
-    "INSERT INTO users (username, password) VALUES (?, ?)",
-    [username, hashedPassword],
+    "INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)",
+    [username, firstname, lastname, email, hashedPassword],
     callback
   );
 };

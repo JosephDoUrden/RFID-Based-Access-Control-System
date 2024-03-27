@@ -5,15 +5,22 @@ const bcrypt = require("bcrypt");
 const AuthController = {};
 
 AuthController.register = (req, res) => {
-  const { username, password } = req.body;
-  UserModel.createUser(username, password, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Registration failed");
-      return;
+  const { username, firstname, lastname, email, password } = req.body;
+  UserModel.createUser(
+    username,
+    firstname,
+    lastname,
+    email,
+    password,
+    (err, results) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Registration failed");
+        return;
+      }
+      res.status(200).send("Registration successful");
     }
-    res.status(200).send("Registration successful");
-  });
+  );
 };
 
 AuthController.login = (req, res) => {
