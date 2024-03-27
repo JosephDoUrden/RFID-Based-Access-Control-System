@@ -2,9 +2,9 @@ const mysql = require("mysql");
 
 const connection = mysql.createConnection({
   host: "localhost",
-  user: "root", // MySQL kullanıcı adı
-  password: "password", // MySQL şifre
-  database: "mydatabase", // veritabanı adı
+  user: "root", // MySQL username
+  password: "", // MySQL password
+  database: "rfid-based-access-control", // db name
 });
 
 connection.connect((err) => {
