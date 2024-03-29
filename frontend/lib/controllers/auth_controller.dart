@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController {
+  static String? errorMessage; // Add a static variable to hold the error message
+
   static Future<bool> register(
       String username, String firstname, String lastname, String email, String password) async {
     final response = await http.post(
@@ -20,9 +22,21 @@ class AuthController {
     );
 
     if (response.statusCode == 200) {
-      return true; // Kayıt başarılı ise true döner
+      errorMessage = null; // Reset error message on successful registration
+      return true; // Registration successful
     } else {
-      return false; // Kayıt başarısız ise false döner
+      // Handle different error scenarios and set errorMessage accordingly
+      switch (response.body) {
+        case "Username already taken":
+          errorMessage = 'Username already taken.';
+          break;
+        case "Email already registered":
+          errorMessage = 'Email already registered.';
+          break;
+        default:
+          errorMessage = 'Registration failed. Please try again.';
+      }
+      return false; // Registration failed
     }
   }
 

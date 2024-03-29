@@ -142,6 +142,7 @@ class _RegisterViewState extends State<RegisterView> {
       _emailController.text,
       _passwordController.text,
     );
+
     if (registered) {
       Navigator.pushReplacement(
         context,
@@ -149,7 +150,7 @@ class _RegisterViewState extends State<RegisterView> {
       );
     } else {
       setState(() {
-        _errorMessage = 'Registration failed. Please try again.';
+        _errorMessage = AuthController.errorMessage ?? 'Registration failed. Please try again.';
       });
     }
   }
