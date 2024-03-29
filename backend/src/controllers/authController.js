@@ -15,7 +15,13 @@ AuthController.register = (req, res) => {
     (err, results) => {
       if (err) {
         console.error(err);
-        res.status(500).send("Registration failed");
+        if (err === "Username already taken") {
+          res.status(400).send("Username already taken");
+        } else if (err === "Email already registered") {
+          res.status(400).send("Email already registered");
+        } else {
+          res.status(500).send("Registration failed");
+        }
         return;
       }
       res.status(200).send("Registration successful");
@@ -39,8 +45,8 @@ AuthController.login = (req, res) => {
       return;
     }
     const token = jwt.sign({ id: results[0].id }, "secretkey", {
-      expiresIn: 86400,
-    }); // Expires in 24 hours
+      expiresIn: 86400, // Expires in 24 hours
+    });
     res.status(200).send({ auth: true, token: token });
   });
 };
