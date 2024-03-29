@@ -21,139 +21,135 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Register',
-              style: TextStyle(
-                fontSize: 28.0,
-                fontWeight: FontWeight.bold,
+      backgroundColor: Colors.blue[900], // Navy blue background color
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Register',
+                style: TextStyle(
+                  fontSize: 28.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // Text color
+                ),
               ),
-            ),
-            const SizedBox(height: 20.0),
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                hintText: 'Username',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            TextField(
-              controller: _firstnameController,
-              decoration: const InputDecoration(
-                hintText: 'First Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            TextField(
-              controller: _lastnameController,
-              decoration: const InputDecoration(
-                hintText: 'Last Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                hintText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            TextField(
-              controller: _passwordController,
-              obscureText: _isPasswordObscured,
-              decoration: InputDecoration(
-                hintText: 'Password',
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordObscured = !_isPasswordObscured;
-                    });
-                  },
-                  icon: Icon(
-                    _isPasswordObscured ? Icons.visibility_off : Icons.visibility,
+              const SizedBox(height: 20.0),
+              _buildTextField(_usernameController, 'Username'),
+              const SizedBox(height: 20.0),
+              _buildTextField(_firstnameController, 'First Name'),
+              const SizedBox(height: 20.0),
+              _buildTextField(_lastnameController, 'Last Name'),
+              const SizedBox(height: 20.0),
+              _buildTextField(_emailController, 'Email'),
+              const SizedBox(height: 20.0),
+              TextField(
+                controller: _passwordController,
+                obscureText: _isPasswordObscured,
+                style: const TextStyle(color: Colors.white), // Text color
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)), // Hint text color
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordObscured = !_isPasswordObscured;
+                      });
+                    },
+                    icon: Icon(
+                      _isPasswordObscured ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.white, // Icon color
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  _errorMessage = '';
-                });
-
-                if (_usernameController.text.isEmpty ||
-                    _firstnameController.text.isEmpty ||
-                    _lastnameController.text.isEmpty ||
-                    _emailController.text.isEmpty ||
-                    _passwordController.text.isEmpty) {
+              const SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: () async {
                   setState(() {
-                    _errorMessage = 'All fields are required.';
+                    _errorMessage = '';
                   });
-                  return;
-                }
 
-                bool registered = await AuthController.register(
-                  _usernameController.text,
-                  _firstnameController.text,
-                  _lastnameController.text,
-                  _emailController.text,
-                  _passwordController.text,
-                );
-                if (registered) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginView()),
+                  if (_usernameController.text.isEmpty ||
+                      _firstnameController.text.isEmpty ||
+                      _lastnameController.text.isEmpty ||
+                      _emailController.text.isEmpty ||
+                      _passwordController.text.isEmpty) {
+                    setState(() {
+                      _errorMessage = 'All fields are required.';
+                    });
+                    return;
+                  }
+
+                  bool registered = await AuthController.register(
+                    _usernameController.text,
+                    _firstnameController.text,
+                    _lastnameController.text,
+                    _emailController.text,
+                    _passwordController.text,
                   );
-                } else {
-                  setState(() {
-                    _errorMessage = 'Registration failed. Please try again.';
-                  });
-                }
-              },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                child: Text(
+                  if (registered) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginView()),
+                    );
+                  } else {
+                    setState(() {
+                      _errorMessage = 'Registration failed. Please try again.';
+                    });
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.blue[900], backgroundColor: Colors.white, // Button text color
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                ),
+                child: const Text(
                   'Register',
                   style: TextStyle(
                     fontSize: 18.0,
                   ),
                 ),
               ),
-            ),
-            if (_errorMessage.isNotEmpty) const SizedBox(height: 20.0),
-            Text(
-              _errorMessage,
-              style: const TextStyle(
-                color: Colors.red,
-              ),
-            ),
-            const SizedBox(height: 10.0),
-            TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginView()),
-                );
-              },
-              child: const Text(
-                "Already have an account? Login here",
-                style: TextStyle(
-                  color: Colors.blue,
+              if (_errorMessage.isNotEmpty) const SizedBox(height: 20.0),
+              Text(
+                _errorMessage,
+                style: const TextStyle(
+                  color: Colors.red,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 10.0),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginView()),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white, // Button text color
+                ),
+                child: const Text(
+                  "Already have an account? Login here",
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hintText) {
+    return TextField(
+      controller: controller,
+      style: const TextStyle(color: Colors.white), // Text color
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)), // Hint text color
+        border: const OutlineInputBorder(),
       ),
     );
   }
