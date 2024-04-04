@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/custom_password_field.dart';
 import 'package:frontend/controllers/auth_controller.dart';
-import 'package:frontend/views/login_view.dart';
+import 'package:frontend/views/login/login_view.dart';
 import 'package:frontend/components/custom_text_field.dart';
-import 'package:frontend/components/custom_button.dart';
 import 'package:frontend/components/error_message.dart';
 
 class RegisterView extends StatefulWidget {
@@ -19,84 +19,70 @@ class _RegisterViewState extends State<RegisterView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String _errorMessage = '';
-  bool _isObscure = true; // Initially, the password is obscured
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900], // Navy blue background color
+      backgroundColor: Colors.blue[900],
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
                 'Register',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // Text color
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 20.0),
               CustomTextField(
                 controller: _usernameController,
-                hintText: 'Username',
-                textColor: Colors.white,
-                hintColor: Colors.white.withOpacity(0.6),
+                label: 'Username',
+                icon: Icons.person,
               ),
               const SizedBox(height: 20.0),
               CustomTextField(
                 controller: _firstnameController,
-                hintText: 'First Name',
-                textColor: Colors.white,
-                hintColor: Colors.white.withOpacity(0.6),
+                label: 'First Name',
+                icon: Icons.person,
               ),
               const SizedBox(height: 20.0),
               CustomTextField(
                 controller: _lastnameController,
-                hintText: 'Last Name',
-                textColor: Colors.white,
-                hintColor: Colors.white.withOpacity(0.6),
+                label: 'Last Name',
+                icon: Icons.person,
               ),
               const SizedBox(height: 20.0),
               CustomTextField(
                 controller: _emailController,
-                hintText: 'Email',
-                textColor: Colors.white,
-                hintColor: Colors.white.withOpacity(0.6),
+                label: 'Email',
+                icon: Icons.email,
               ),
               const SizedBox(height: 20.0),
-              TextField(
+              CustomPasswordField(
                 controller: _passwordController,
-                style: const TextStyle(color: Colors.white), // Text color
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)), // Hint text color
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: _isObscure
-                        ? const Icon(Icons.visibility_off, color: Colors.white)
-                        : const Icon(Icons.visibility, color: Colors.white),
-                    onPressed: () {
-                      setState(() {
-                        _isObscure = !_isObscure; // Toggle the password visibility
-                      });
-                    },
-                  ),
-                ),
-                obscureText: _isObscure, // Toggle the obscure text based on state
+                label: 'Password',
               ),
               const SizedBox(height: 20.0),
-              CustomButton(
+              ElevatedButton(
                 onPressed: _register,
-                text: 'Register', // Change from buttonText to text
-                textColor: Colors.blue[900]!,
-                buttonColor: Colors.white, // Change backgroundColor to buttonColor
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.blue[900],
+                  backgroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                ),
+                child: const Text('Get Started', style: TextStyle(fontSize: 18.0)),
               ),
-              if (_errorMessage.isNotEmpty) const SizedBox(height: 20.0),
-              ErrorMessage(message: _errorMessage, color: Colors.red),
+              if (_errorMessage.isNotEmpty) ...[
+                const SizedBox(height: 20.0),
+                ErrorMessage(message: _errorMessage, color: Colors.red),
+              ],
               const SizedBox(height: 10.0),
               TextButton(
                 onPressed: () {
@@ -105,12 +91,8 @@ class _RegisterViewState extends State<RegisterView> {
                     MaterialPageRoute(builder: (context) => const LoginView()),
                   );
                 },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white, // Button text color
-                ),
-                child: const Text(
-                  "Already have an account? Login here",
-                ),
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                child: const Text("Already have an account? Login here"),
               ),
             ],
           ),
