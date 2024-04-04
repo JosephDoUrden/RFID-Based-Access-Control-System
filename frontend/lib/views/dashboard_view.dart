@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/rfid_card.dart';
 import 'package:frontend/controllers/dashboard_controller.dart';
 
 class DashboardView extends StatefulWidget {
@@ -37,12 +38,21 @@ class _DashboardViewState extends State<DashboardView> {
       appBar: AppBar(
         title: const Text('Dashboard'),
       ),
-      body: Center(
-        child: _errorMessage.isNotEmpty
-            ? Text(_errorMessage)
-            : _dashboardData.isNotEmpty
-                ? Text(_dashboardData)
-                : const CircularProgressIndicator(),
+      body: Column(
+        children: [
+          const RfidCard(
+            cardNumber: '1234 5678 9012 3456',
+            cardHolder: 'John Doe',
+            expiryDate: '10/25',
+          ),
+          Center(
+            child: _errorMessage.isNotEmpty
+                ? Text(_errorMessage)
+                : _dashboardData.isNotEmpty
+                    ? Text(_dashboardData)
+                    : const CircularProgressIndicator(),
+          ),
+        ],
       ),
     );
   }
