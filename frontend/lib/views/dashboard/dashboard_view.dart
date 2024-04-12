@@ -35,11 +35,9 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-      ),
       body: Column(
         children: [
+          const SizedBox(height: 20),
           const RfidCard(
             cardNumber: '1234 5678 9012 3456',
             cardHolder: 'John Doe',

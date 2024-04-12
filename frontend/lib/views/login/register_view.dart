@@ -76,6 +76,9 @@ class _RegisterViewState extends State<RegisterView> {
                   foregroundColor: Colors.blue[900],
                   backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
                 child: const Text('Get Started', style: TextStyle(fontSize: 18.0)),
               ),

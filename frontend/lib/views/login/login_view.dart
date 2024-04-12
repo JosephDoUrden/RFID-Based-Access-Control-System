@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/controllers/auth_controller.dart';
-import 'package:frontend/views/dashboard_view.dart';
+import 'package:frontend/views/home/home_screen_view.dart';
 import 'package:frontend/views/login/register_view.dart';
 import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/components/custom_password_field.dart';
@@ -55,6 +55,9 @@ class _LoginViewState extends State<LoginView> {
                   foregroundColor: Colors.blue[900],
                   backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
                 child: const Text('Login', style: TextStyle(fontSize: 18.0)),
               ),
@@ -93,7 +96,7 @@ class _LoginViewState extends State<LoginView> {
     if (loggedIn) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const DashboardView()),
+        MaterialPageRoute(builder: (context) => const HomeScreenView()),
       );
     } else {
       setState(() {
