@@ -54,4 +54,37 @@ UserModel.getUserByEmail = (email, callback) => {
   connection.query("SELECT * FROM users WHERE email = ?", [email], callback);
 };
 
+// Get user data by ID
+UserModel.getUserById = (userId, callback) => {
+  connection.query(
+    "SELECT * FROM users WHERE id = ?",
+    [userId],
+    (err, user) => {
+      if (err) {
+        return callback(err);
+      }
+      if (user.length === 0) {
+        return callback(null, null); // User not found
+      }
+      callback(null, user[0]);
+    }
+  );
+};
+
+// Update user details
+UserModel.updateUser = (
+  userId,
+  username,
+  firstname,
+  lastname,
+  email,
+  callback
+) => {
+  connection.query(
+    "UPDATE users SET username = ?, firstname = ?, lastname = ?, email = ? WHERE id = ?",
+    [username, firstname, lastname, email, userId],
+    callback
+  );
+};
+
 module.exports = UserModel;
