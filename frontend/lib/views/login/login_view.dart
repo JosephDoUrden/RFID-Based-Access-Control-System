@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/views/home/home_screen_view.dart';
-import 'package:frontend/views/dashboard/dashboard_view.dart';
 import 'package:frontend/views/login/register_view.dart';
 import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/components/custom_password_field.dart';
