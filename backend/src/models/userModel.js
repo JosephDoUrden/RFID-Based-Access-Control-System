@@ -99,4 +99,38 @@ UserModel.changePassword = (userId, newPassword, callback) => {
   );
 };
 
+// Add a method to generate and store reset password tokens for users
+UserModel.generateResetPasswordToken = (
+  email,
+  token,
+  expirationDate,
+  callback
+) => {
+  connection.query(
+    "UPDATE users SET reset_password_token = ?, reset_password_expires = ? WHERE email = ?",
+    [token, expirationDate, email],
+    callback
+  );
+};
+
+// Add a method to retrieve user by reset password token
+UserModel.getUserByResetPasswordToken = (token, callback) => {
+  connection.query(
+    "SELECT * FROM users WHERE reset_password_token = ? AND reset_password_expires > NOW()",
+    [token],
+    callback
+  );
+};
+
+// Add a method to update user's password and clear the reset password token
+UserModel.updatePasswordAndClearToken = (userId, newPassword, callback) => {
+  // Hash the new password before storing it in the database
+  const hashedPassword = bcrypt.hashSync(newPassword, 8);
+  connection.query(
+    "UPDATE users SET password = ?, reset_password_token = NULL, reset_password_expires = NULL WHERE id = ?",
+    [hashedPassword, userId],
+    callback
+  );
+};
+
 module.exports = UserModel;

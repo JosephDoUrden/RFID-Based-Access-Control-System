@@ -10,5 +10,7 @@ router.post("/logout", requireAuth, (req, res) => {
   res.clearCookie("jwt");
   res.status(200).json({ message: "Logout successful" });
 });
+router.post("/forgot-password", AuthController.forgotPassword);
+router.post("/reset-password", AuthController.resetPassword);
 
 module.exports = router;
