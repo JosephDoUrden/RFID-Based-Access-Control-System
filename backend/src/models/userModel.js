@@ -87,4 +87,16 @@ UserModel.updateUser = (
   );
 };
 
+// Update user password
+UserModel.changePassword = (userId, newPassword, callback) => {
+  // Hash the new password
+  const hashedPassword = bcrypt.hashSync(newPassword, 8);
+
+  connection.query(
+    "UPDATE users SET password = ? WHERE id = ?",
+    [hashedPassword, userId],
+    callback
+  );
+};
+
 module.exports = UserModel;
