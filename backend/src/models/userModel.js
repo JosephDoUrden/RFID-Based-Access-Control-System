@@ -51,7 +51,21 @@ UserModel.getUserByUsername = (username, callback) => {
 };
 
 UserModel.getUserByEmail = (email, callback) => {
-  connection.query("SELECT * FROM users WHERE email = ?", [email], callback);
+  connection.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    (err, result) => {
+      if (err) {
+        return callback(err, null);
+      }
+      // Return the user data if found
+      if (result.length > 0) {
+        return callback(null, result[0]); // Assuming email is unique, return the first user found
+      } else {
+        return callback(null, null); // If no user found, return null
+      }
+    }
+  );
 };
 
 // Get user data by ID
@@ -91,7 +105,6 @@ UserModel.updateUser = (
 UserModel.changePassword = (userId, newPassword, callback) => {
   // Hash the new password
   const hashedPassword = bcrypt.hashSync(newPassword, 8);
-
   connection.query(
     "UPDATE users SET password = ? WHERE id = ?",
     [hashedPassword, userId],
@@ -99,36 +112,49 @@ UserModel.changePassword = (userId, newPassword, callback) => {
   );
 };
 
-// Add a method to generate and store reset password tokens for users
-UserModel.generateResetPasswordToken = (
-  email,
-  token,
-  expirationDate,
-  callback
-) => {
-  connection.query(
-    "UPDATE users SET reset_password_token = ?, reset_password_expires = ? WHERE email = ?",
-    [token, expirationDate, email],
-    callback
-  );
-};
-
-// Add a method to retrieve user by reset password token
-UserModel.getUserByResetPasswordToken = (token, callback) => {
-  connection.query(
-    "SELECT * FROM users WHERE reset_password_token = ? AND reset_password_expires > NOW()",
-    [token],
-    callback
-  );
-};
-
-// Add a method to update user's password and clear the reset password token
-UserModel.updatePasswordAndClearToken = (userId, newPassword, callback) => {
-  // Hash the new password before storing it in the database
+// Update user password
+UserModel.updatePassword = (email, newPassword, callback) => {
+  // Hash the new password
   const hashedPassword = bcrypt.hashSync(newPassword, 8);
+
   connection.query(
-    "UPDATE users SET password = ?, reset_password_token = NULL, reset_password_expires = NULL WHERE id = ?",
-    [hashedPassword, userId],
+    "UPDATE users SET password = ? WHERE email = ?",
+    [hashedPassword, email],
+    callback
+  );
+};
+
+// Save reset code in the database
+UserModel.saveResetCode = (email, resetCode, callback) => {
+  connection.query(
+    "INSERT INTO reset_codes (email, reset_code) VALUES (?, ?)",
+    [email, resetCode],
+    callback
+  );
+};
+
+// Check if reset code is valid
+UserModel.isValidResetCode = (email, resetCode) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM reset_codes WHERE email = ? AND reset_code = ?",
+      [email, resetCode],
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.length > 0);
+        }
+      }
+    );
+  });
+};
+
+// Delete reset code from the database
+UserModel.deleteResetCode = (email, callback) => {
+  connection.query(
+    "DELETE FROM reset_codes WHERE email = ?",
+    [email],
     callback
   );
 };
