@@ -65,7 +65,15 @@ class _ProfileViewState extends State<ProfileView> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileView()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditProfileView(
+                                        username: profileData['username'],
+                                        firstname: profileData['firstname'],
+                                        lastname: profileData['lastname'],
+                                        email: profileData['email'],
+                                      )));
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
