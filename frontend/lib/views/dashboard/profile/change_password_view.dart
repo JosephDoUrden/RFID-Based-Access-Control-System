@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/custom_password_field.dart';
-import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/controllers/profile_controller.dart';
 
 class ChangePasswordView extends StatefulWidget {
