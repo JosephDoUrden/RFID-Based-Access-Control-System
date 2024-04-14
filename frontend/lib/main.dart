@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/views/intro_slide_view.dart';
+import 'package:frontend/views/onboarding_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: const IntroScreenView(), // Uygulama başlangıç sayfası
+      home: const OnboardingView(), // Uygulama başlangıç sayfası
     );
   }
 }

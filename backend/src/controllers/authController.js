@@ -1,6 +1,7 @@
 const UserModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Mailer = require("../config/mailer");
 
 const AuthController = {};
 
@@ -50,5 +51,70 @@ AuthController.login = (req, res) => {
     res.status(200).send({ auth: true, token: token });
   });
 };
+
+// Forgot password
+AuthController.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if the user with the provided email exists
+    await UserModel.getUserByEmail(email, (err, user) => {
+      if (err) {
+        console.error("Error:", err);
+        return res.status(404).json({ error: err });
+      }
+    });
+
+    // Generate 6-digit reset code
+    const resetCode = generateRandomCode(6);
+
+    // Save the reset code in the database
+    await UserModel.saveResetCode(email, resetCode);
+
+    // Send the reset code to the user via email
+    await Mailer.sendResetCodeEmail(email, resetCode);
+
+    // Return success response
+    res.status(200).json({ message: "Reset code sent successfully" });
+  } catch (error) {
+    console.error("Error sending reset code:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Reset password
+AuthController.resetPassword = async (req, res) => {
+  const { email, resetCode, newPassword } = req.body;
+
+  try {
+    // Check if the reset code is valid
+    const isValidCode = await UserModel.isValidResetCode(email, resetCode);
+    if (!isValidCode) {
+      return res.status(400).json({ error: "Invalid reset code" });
+    }
+
+    await UserModel.updatePassword(email, newPassword);
+
+    // Delete the reset code from the database
+    await UserModel.deleteResetCode(email);
+
+    // Return success response
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Function to generate a unique reset password x-digit code
+function generateRandomCode(length) {
+  const charset = "0123456789"; // Define the character set for the code
+  let code = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    code += charset[randomIndex];
+  }
+  return code;
+}
 
 module.exports = AuthController;
