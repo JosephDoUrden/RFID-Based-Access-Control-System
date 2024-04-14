@@ -75,7 +75,7 @@ class _LoginViewState extends State<LoginView> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ForgotPasswordScreenView()),
+                      MaterialPageRoute(builder: (context) => const ForgotPasswordView()),
                     );
                   },
                   style: TextButton.styleFrom(
@@ -113,7 +113,7 @@ class _LoginViewState extends State<LoginView> {
     if (loggedIn) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreenView()),
+        MaterialPageRoute(builder: (context) => const HomeView()),
         (route) => false,
       );
     } else {

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/views/login/login_view.dart';
 
-class ResetPasswordScreenView extends StatefulWidget {
+class ResetPasswordView extends StatefulWidget {
   final String email; // Store the email from the forgot password screen
 
-  const ResetPasswordScreenView({Key? key, required this.email}) : super(key: key);
+  const ResetPasswordView({Key? key, required this.email}) : super(key: key);
 
   @override
-  _ResetPasswordScreenViewState createState() => _ResetPasswordScreenViewState();
+  _ResetPasswordViewState createState() => _ResetPasswordViewState();
 }
 
-class _ResetPasswordScreenViewState extends State<ResetPasswordScreenView> {
+class _ResetPasswordViewState extends State<ResetPasswordView> {
   final TextEditingController _resetCodeController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   String _errorMessage = '';

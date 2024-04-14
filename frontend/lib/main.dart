@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: const OnboardingScreenView(), // Uygulama başlangıç sayfası
+      home: const OnboardingView(), // Uygulama başlangıç sayfası
     );
   }
 }

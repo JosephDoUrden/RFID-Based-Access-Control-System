@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/controllers/profile_controller.dart';
 
-class ProfileScreenView extends StatefulWidget {
-  const ProfileScreenView({Key? key}) : super(key: key);
+class ProfileView extends StatefulWidget {
+  const ProfileView({Key? key}) : super(key: key);
 
   @override
-  _ProfileScreenViewState createState() => _ProfileScreenViewState();
+  _ProfileViewState createState() => _ProfileViewState();
 }
 
-class _ProfileScreenViewState extends State<ProfileScreenView> {
+class _ProfileViewState extends State<ProfileView> {
   String _profileData = '';
   String _errorMessage = '';
 

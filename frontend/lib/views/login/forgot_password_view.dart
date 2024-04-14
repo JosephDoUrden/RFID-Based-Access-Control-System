@@ -3,14 +3,14 @@ import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/views/login/login_view.dart';
 import 'package:frontend/views/login/reset_password_view.dart';
 
-class ForgotPasswordScreenView extends StatefulWidget {
-  const ForgotPasswordScreenView({Key? key}) : super(key: key);
+class ForgotPasswordView extends StatefulWidget {
+  const ForgotPasswordView({Key? key}) : super(key: key);
 
   @override
-  _ForgotPasswordScreenViewState createState() => _ForgotPasswordScreenViewState();
+  _ForgotPasswordViewState createState() => _ForgotPasswordViewState();
 }
 
-class _ForgotPasswordScreenViewState extends State<ForgotPasswordScreenView> {
+class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final TextEditingController _emailController = TextEditingController();
   String _errorMessage = '';
 
@@ -106,7 +106,7 @@ class _ForgotPasswordScreenViewState extends State<ForgotPasswordScreenView> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ResetPasswordScreenView(email: _emailController.text),
+          builder: (context) => ResetPasswordView(email: _emailController.text),
         ),
       );
     } else {

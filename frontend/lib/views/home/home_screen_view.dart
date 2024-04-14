@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/views/dashboard/dashboard_view.dart';
-import 'package:frontend/views/dashboard/profile_screen_view.dart';
+import 'package:frontend/views/dashboard/profile_view.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-class HomeScreenView extends StatefulWidget {
-  const HomeScreenView({super.key});
+class HomeView extends StatefulWidget {
+  const HomeView({super.key});
 
   @override
-  _HomeScreenViewState createState() => _HomeScreenViewState();
+  _HomeViewState createState() => _HomeViewState();
 }
 
-class _HomeScreenViewState extends State<HomeScreenView> {
+class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   static final List<Widget> _widgetOptions = <Widget>[
@@ -23,7 +23,7 @@ class _HomeScreenViewState extends State<HomeScreenView> {
       'Search',
       style: optionStyle,
     ),
-    const ProfileScreenView(),
+    const ProfileView(),
   ];
 
   @override

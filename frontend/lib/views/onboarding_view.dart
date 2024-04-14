@@ -4,8 +4,8 @@ import 'package:frontend/views/login/login_view.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
-class OnboardingScreenView extends StatelessWidget {
-  const OnboardingScreenView({super.key});
+class OnboardingView extends StatelessWidget {
+  const OnboardingView({super.key});
 
   @override
   Widget build(BuildContext context) {
