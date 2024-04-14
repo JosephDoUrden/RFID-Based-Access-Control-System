@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/custom_password_field.dart';
+import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/views/login/login_view.dart';
 
@@ -37,53 +39,15 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 ),
               ),
               const SizedBox(height: 30.0),
-              TextFormField(
+              CustomTextField(
                 controller: _resetCodeController,
-                decoration: InputDecoration(
-                  labelText: 'Reset Code',
-                  labelStyle: const TextStyle(color: Colors.white),
-                  prefixIcon: const Icon(Icons.code, color: Colors.white),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.white),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.white),
-                  ),
-                ),
-                style: const TextStyle(color: Colors.white),
-                keyboardType: TextInputType.text,
-                cursorColor: Colors.white,
+                label: 'Reset Code',
+                icon: Icons.code,
               ),
               const SizedBox(height: 20.0),
-              TextFormField(
+              CustomPasswordField(
                 controller: _newPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'New Password',
-                  labelStyle: const TextStyle(color: Colors.white),
-                  prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.white),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(color: Colors.white),
-                  ),
-                ),
-                style: const TextStyle(color: Colors.white),
-                keyboardType: TextInputType.text,
-                cursorColor: Colors.white,
-                obscureText: true,
+                label: 'Password',
               ),
               const SizedBox(height: 20.0),
               ElevatedButton(
@@ -91,7 +55,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   backgroundColor: Colors.white,
                 ),

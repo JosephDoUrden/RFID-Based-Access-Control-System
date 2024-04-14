@@ -35,8 +35,18 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
             });
           },
         ),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        ),
       ),
     );
   }
