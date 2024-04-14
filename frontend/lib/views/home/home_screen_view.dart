@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/views/dashboard/dashboard_view.dart';
-import 'package:frontend/views/dashboard/profile_view.dart';
+import 'package:frontend/views/dashboard/profile/profile_view.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class HomeView extends StatefulWidget {

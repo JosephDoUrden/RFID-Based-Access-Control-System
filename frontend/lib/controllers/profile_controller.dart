@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileController {
-  static Future<String> fetchProfileData() async {
+  static Future<Map<String, dynamic>> fetchProfileData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -19,7 +20,7 @@ class ProfileController {
       );
 
       if (response.statusCode == 200) {
-        return response.body;
+        return jsonDecode(response.body);
       } else {
         throw Exception('Failed to load profile data');
       }
