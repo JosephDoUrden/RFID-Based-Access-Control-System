@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/controllers/profile_controller.dart';
 import 'package:frontend/views/dashboard/profile/change_password_view.dart';
 import 'package:frontend/views/dashboard/profile/edit_profile_view.dart';
+import 'package:frontend/views/login/login_view.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -88,6 +90,23 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    widthFactor: 3.5,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _showLogoutConfirmationDialog(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                      child: const Text('Logout', style: TextStyle(fontSize: 16.0, color: Colors.white)),
+                    ),
+                  ),
                 ],
               );
             }
@@ -119,6 +138,36 @@ class _ProfileViewState extends State<ProfileView> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Perform logout action
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginView()),
+                );
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
