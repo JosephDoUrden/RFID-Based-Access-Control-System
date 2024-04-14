@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/views/home/home_screen_view.dart';
+import 'package:frontend/views/login/forgot_password_view.dart';
 import 'package:frontend/views/login/register_view.dart';
 import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/components/custom_password_field.dart';
@@ -38,6 +39,14 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
               const SizedBox(height: 30.0),
+              if (_errorMessage.isNotEmpty) ...[
+                const SizedBox(height: 20.0),
+                Text(
+                  _errorMessage,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ],
               CustomTextField(
                 controller: _usernameController,
                 label: 'Username',
@@ -52,24 +61,29 @@ class _LoginViewState extends State<LoginView> {
               ElevatedButton(
                 onPressed: _login,
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.blue[900],
-                  backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
+                  backgroundColor: Colors.white,
                 ),
-                child: const Text('Login', style: TextStyle(fontSize: 18.0)),
+                child: Text('Login', style: TextStyle(fontSize: 18.0, color: Colors.blue[900])),
               ),
-              if (_errorMessage.isNotEmpty) ...[
-                const SizedBox(height: 20.0),
-                Text(
-                  _errorMessage,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.red),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ForgotPasswordScreenView()),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text("Forgot Password?"),
                 ),
-              ],
-              const SizedBox(height: 20.0),
+              ),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -77,7 +91,10 @@ class _LoginViewState extends State<LoginView> {
                     MaterialPageRoute(builder: (context) => const RegisterView()),
                   );
                 },
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                ),
                 child: const Text("Don't have an account? Register here"),
               ),
             ],
@@ -94,9 +111,10 @@ class _LoginViewState extends State<LoginView> {
 
     bool loggedIn = await AuthController.login(_usernameController.text, _passwordController.text);
     if (loggedIn) {
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreenView()),
+        (route) => false,
       );
     } else {
       setState(() {

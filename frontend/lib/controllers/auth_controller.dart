@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController {
-  static String? errorMessage; // Add a static variable to hold the error message
+  static String? errorMessage;
 
   static Future<bool> register(
       String username, String firstname, String lastname, String email, String password) async {
@@ -22,10 +22,9 @@ class AuthController {
     );
 
     if (response.statusCode == 200) {
-      errorMessage = null; // Reset error message on successful registration
-      return true; // Registration successful
+      errorMessage = null;
+      return true;
     } else {
-      // Handle different error scenarios and set errorMessage accordingly
       switch (response.body) {
         case "Username already taken":
           errorMessage = 'Username already taken.';
@@ -36,7 +35,7 @@ class AuthController {
         default:
           errorMessage = 'Registration failed. Please try again.';
       }
-      return false; // Registration failed
+      return false;
     }
   }
 
@@ -53,21 +52,56 @@ class AuthController {
     );
 
     if (response.statusCode == 200) {
-      // Parse the response body
       Map<String, dynamic> data = jsonDecode(response.body);
-      // Extract token from the response
       String? token = data['token'];
 
       if (token != null) {
-        // Store the token using shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
-        return true; // Giriş başarılı ise true döner
+        return true;
       } else {
-        return false; // Token alınamadıysa giriş başarısız olarak işaretlenir
+        return false;
       }
     } else {
-      return false; // Giriş başarısız ise false döner
+      return false;
+    }
+  }
+
+  static Future<bool> sendResetCode(String email) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/api/auth/forgot-password'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static Future<bool> resetPassword(String email, String resetCode, String newPassword) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/api/auth/reset-password'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'resetCode': resetCode,
+        'newPassword': newPassword,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
     }
   }
 }
