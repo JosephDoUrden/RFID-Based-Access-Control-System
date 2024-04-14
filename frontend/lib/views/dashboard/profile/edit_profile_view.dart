@@ -7,7 +7,11 @@ class EditProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        title: const Text('Edit Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue[900],
       ),
       body: const Padding(
         padding: EdgeInsets.all(20.0),
