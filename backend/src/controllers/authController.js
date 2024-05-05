@@ -6,11 +6,11 @@ const Mailer = require("../config/mailer");
 const AuthController = {};
 
 AuthController.register = (req, res) => {
-  const { username, firstname, lastname, email, password } = req.body;
+  const { username, name, surname, email, password } = req.body;
   UserModel.createUser(
     username,
-    firstname,
-    lastname,
+    name,
+    surname,
     email,
     password,
     (err, results) => {
