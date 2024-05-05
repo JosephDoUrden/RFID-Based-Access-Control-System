@@ -5,8 +5,8 @@ const UserModel = {};
 
 UserModel.createUser = (
   username,
-  firstname,
-  lastname,
+  name,
+  surname,
   email,
   password,
   callback
@@ -32,8 +32,8 @@ UserModel.createUser = (
           // Proceed with user creation
           const hashedPassword = bcrypt.hashSync(password, 8);
           connection.query(
-            "INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)",
-            [username, firstname, lastname, email, hashedPassword],
+            "INSERT INTO user (Username, Name, Surname, Email, Password) VALUES (?, ?, ?, ?, ?)",
+            [username, name, surname, email, hashedPassword],
             callback
           );
         }
@@ -44,7 +44,7 @@ UserModel.createUser = (
 
 UserModel.getUserByUsername = (username, callback) => {
   connection.query(
-    "SELECT * FROM users WHERE username = ?",
+    "SELECT * FROM user WHERE Username = ?",
     [username],
     callback
   );
@@ -52,7 +52,7 @@ UserModel.getUserByUsername = (username, callback) => {
 
 UserModel.getUserByEmail = (email, callback) => {
   connection.query(
-    "SELECT * FROM users WHERE email = ?",
+    "SELECT * FROM user WHERE Email = ?",
     [email],
     (err, result) => {
       if (err) {
@@ -71,7 +71,7 @@ UserModel.getUserByEmail = (email, callback) => {
 // Get user data by ID
 UserModel.getUserById = (userId, callback) => {
   connection.query(
-    "SELECT * FROM users WHERE id = ?",
+    "SELECT * FROM user WHERE UserID = ?",
     [userId],
     (err, user) => {
       if (err) {
@@ -89,14 +89,14 @@ UserModel.getUserById = (userId, callback) => {
 UserModel.updateUser = (
   userId,
   username,
-  firstname,
-  lastname,
+  name,
+  surname,
   email,
   callback
 ) => {
   connection.query(
-    "UPDATE users SET username = ?, firstname = ?, lastname = ?, email = ? WHERE id = ?",
-    [username, firstname, lastname, email, userId],
+    "UPDATE users SET Username = ?, Name = ?, Surname = ?, Email = ? WHERE UserID = ?",
+    [username, name, surname, email, userId],
     callback
   );
 };
@@ -106,7 +106,7 @@ UserModel.changePassword = (userId, newPassword, callback) => {
   // Hash the new password
   const hashedPassword = bcrypt.hashSync(newPassword, 8);
   connection.query(
-    "UPDATE users SET password = ? WHERE id = ?",
+    "UPDATE user SET Password = ? WHERE UserID = ?",
     [hashedPassword, userId],
     callback
   );
@@ -118,7 +118,7 @@ UserModel.updatePassword = (email, newPassword, callback) => {
   const hashedPassword = bcrypt.hashSync(newPassword, 8);
 
   connection.query(
-    "UPDATE users SET password = ? WHERE email = ?",
+    "UPDATE user SET Password = ? WHERE Email = ?",
     [hashedPassword, email],
     callback
   );
@@ -127,7 +127,7 @@ UserModel.updatePassword = (email, newPassword, callback) => {
 // Save reset code in the database
 UserModel.saveResetCode = (email, resetCode, callback) => {
   connection.query(
-    "INSERT INTO reset_codes (email, reset_code) VALUES (?, ?)",
+    "INSERT INTO reset_codes (Email, ResetCode) VALUES (?, ?)",
     [email, resetCode],
     callback
   );
@@ -137,7 +137,7 @@ UserModel.saveResetCode = (email, resetCode, callback) => {
 UserModel.isValidResetCode = (email, resetCode) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT * FROM reset_codes WHERE email = ? AND reset_code = ?",
+      "SELECT * FROM reset_codes WHERE Email = ? AND ResetCode = ?",
       [email, resetCode],
       (err, result) => {
         if (err) {
@@ -153,7 +153,7 @@ UserModel.isValidResetCode = (email, resetCode) => {
 // Delete reset code from the database
 UserModel.deleteResetCode = (email, callback) => {
   connection.query(
-    "DELETE FROM reset_codes WHERE email = ?",
+    "DELETE FROM reset_codes WHERE Email = ?",
     [email],
     callback
   );
