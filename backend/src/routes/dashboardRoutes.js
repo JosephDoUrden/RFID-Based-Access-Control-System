@@ -30,9 +30,9 @@ router.get("/logs", requireAuth, (req, res) => {
     }
     const formatTimestamp = (timestamp) => {
       const date = new Date(timestamp);
-      return date.toLocaleString('tr-TR', { timeZone: 'UTC' }); // Adjust timezone as needed
+      return date.toLocaleString("tr-TR", { timeZone: "UTC" }); // Adjust timezone as needed
     };
-    
+
     // Update timestamps in userLogData
     userLogData.TimseStamp = formatTimestamp(userLogData.TimseStamp);
     userLogData.Date = formatTimestamp(userLogData.Date);

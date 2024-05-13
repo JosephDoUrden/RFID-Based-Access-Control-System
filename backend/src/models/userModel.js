@@ -155,14 +155,12 @@ UserModel.getUserLogById = (userId, callback) => {
   connection.query(
     "SELECT access_log.*, gate.GateName, gate.Location FROM access_log JOIN gate ON access_log.GateID = gate.GateID WHERE access_log.UserID = ?",
     [userId],
-    (err, log) => {
+    (err, logs) => {
       if (err) {
         return callback(err);
       }
-      if (log.length === 0) {
-        return callback(null, null); // User not found
-      }
-      callback(null, log[0]);
+      // Return logs data
+      callback(null, logs);
     }
   );
 };
