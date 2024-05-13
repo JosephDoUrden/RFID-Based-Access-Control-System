@@ -15,11 +15,21 @@ class Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      id: json['id'],
-      username: json['username'],
-      firstname: json['firstname'],
-      lastname: json['lastname'],
-      email: json['email'],
+      id: json['UserID'],
+      username: json['Username'] ?? '',
+      firstname: json['Name'] ?? '',
+      lastname: json['Surname'] ?? '',
+      email: json['Email'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'UserID': id,
+      'Username': username,
+      'Name': firstname,
+      'Surname': lastname,
+      'Email': email,
+    };
   }
 }
