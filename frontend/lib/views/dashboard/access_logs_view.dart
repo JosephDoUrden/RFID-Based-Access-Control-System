@@ -1,40 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/components/rfid_card.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/controllers/dashboard_controller.dart';
 import 'package:frontend/models/log.dart';
 import 'package:frontend/models/user_profile.dart';
 
-class DashboardView extends StatefulWidget {
-  const DashboardView({Key? key}) : super(key: key);
+class AccessLogsView extends StatefulWidget {
+  const AccessLogsView({super.key});
 
   @override
-  _DashboardViewState createState() => _DashboardViewState();
+  State<AccessLogsView> createState() => _AccessLogsViewState();
 }
 
-class _DashboardViewState extends State<DashboardView> {
-  UserProfile? _userProfile;
+class _AccessLogsViewState extends State<AccessLogsView> {
   String _errorMessage = '';
   List<Log> _logs = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchDashboardData();
     _fetchLogs();
-  }
-
-  Future<void> _fetchDashboardData() async {
-    try {
-      UserProfile userProfile = await DashboardController.fetchDashboardData();
-      setState(() {
-        _userProfile = userProfile;
-        _errorMessage = ''; // Clear error message if data is successfully fetched
-      });
-    } catch (error) {
-      setState(() {
-        _errorMessage = 'Error: $error';
-      });
-    }
   }
 
   Future<void> _fetchLogs() async {
@@ -55,25 +39,13 @@ class _DashboardViewState extends State<DashboardView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: RfidCard(
-              cardNumber: _userProfile?.cardID ?? 'N/A',
-              cardHolder: '${_userProfile?.name ?? 'N/A'} ${_userProfile?.surname ?? 'N/A'}',
-            ),
-          ),
-          const SizedBox(height: 20),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.all(8.0),
             child: Text(
-              'Last 3 Passes',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              'Access Logs',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
           Expanded(
@@ -82,9 +54,7 @@ class _DashboardViewState extends State<DashboardView> {
                   ? Text(_errorMessage)
                   : _logs.isNotEmpty
                       ? ListView.builder(
-                          itemCount: _logs.length > 3
-                              ? 3
-                              : _logs.length, // Display only the last three logs or less if there are fewer logs
+                          itemCount: _logs.length,
                           itemBuilder: (context, index) {
                             Log log = _logs[_logs.length - index - 1]; // Start from the last log in the list
                             return Card(

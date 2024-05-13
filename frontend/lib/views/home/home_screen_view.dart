@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/views/dashboard/access_logs_view.dart';
 import 'package:frontend/views/dashboard/dashboard_view.dart';
 import 'package:frontend/views/dashboard/profile/profile_view.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -15,14 +16,7 @@ class _HomeViewState extends State<HomeView> {
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   static final List<Widget> _widgetOptions = <Widget>[
     const DashboardView(),
-    const Text(
-      'Gates',
-      style: optionStyle,
-    ),
-    const Text(
-      'Search',
-      style: optionStyle,
-    ),
+    const AccessLogsView(),
     const ProfileView(),
   ];
 
@@ -69,12 +63,8 @@ class _HomeViewState extends State<HomeView> {
                   text: 'Home',
                 ),
                 GButton(
-                  icon: Icons.favorite,
-                  text: 'Gates',
-                ),
-                GButton(
-                  icon: Icons.search,
-                  text: 'Search',
+                  icon: Icons.list_alt,
+                  text: 'Activities',
                 ),
                 GButton(
                   icon: Icons.person,
