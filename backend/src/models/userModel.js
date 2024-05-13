@@ -150,4 +150,21 @@ UserModel.deleteResetCode = (email, callback) => {
   );
 };
 
+// Get user log data by ID
+UserModel.getUserLogById = (userId, callback) => {
+  connection.query(
+    "SELECT access_log.*, gate.gatename, gate.gate_location FROM access_log JOIN gate ON access_log.gateid = gate.gateid WHERE access_log.UserID = ?",
+    [userId],
+    (err, log) => {
+      if (err) {
+        return callback(err);
+      }
+      if (log.length === 0) {
+        return callback(null, null); // User not found
+      }
+      callback(null, log[0]);
+    }
+  );
+};
+
 module.exports = UserModel;
