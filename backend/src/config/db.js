@@ -1,9 +1,9 @@
 const mysql = require("mysql");
 
 const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root", // MySQL username
-  password: "", // MySQL password
+  host: "195.35.28.226",
+  user: "remote", // MySQL username
+  password: "remote123", // MySQL password
   database: "rfid-based-access-control", // db name
 });
 

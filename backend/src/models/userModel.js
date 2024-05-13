@@ -3,15 +3,8 @@ const bcrypt = require("bcryptjs");
 
 const UserModel = {};
 
-UserModel.createUser = (
-  username,
-  name,
-  surname,
-  email,
-  password,
-  callback
-) => {
-  // Check if username or email already exists  
+UserModel.createUser = (username, name, surname, email, password, callback) => {
+  // Check if username or email already exists
   UserModel.getUserByUsername(username, (err, existingUsername) => {
     if (err) {
       return callback(err);
@@ -31,26 +24,37 @@ UserModel.createUser = (
         } else {
           // Proceed with user creation
           // Get the last UserID from the database
-          connection.query("SELECT MAX(UserID) AS LastUserID FROM user", (err, result) => {
-            if (err) {
-              // Handle error
-              return callback(err);
+          connection.query(
+            "SELECT MAX(UserID) AS LastUserID FROM user",
+            (err, result) => {
+              if (err) {
+                // Handle error
+                return callback(err);
+              }
+              // Extract the last UserID
+              const lastUserID = result[0].LastUserID;
+              // Increment it by one
+              const nextUserID = lastUserID + 1;
+              const roleId = 2;
+              const cardId = "B3E05225";
+              // Proceed with user creation
+              const hashedPassword = bcrypt.hashSync(password, 8);
+              connection.query(
+                "INSERT INTO user (UserID, Username, Name, Surname, RoleID, CardID, Email, Password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                  nextUserID,
+                  username,
+                  name,
+                  surname,
+                  roleId,
+                  cardId,
+                  email,
+                  hashedPassword,
+                ],
+                callback
+              );
             }
-            // Extract the last UserID
-            const lastUserID = result[0].LastUserID;
-            // Increment it by one
-            const nextUserID = lastUserID + 1;
-            const roleId = 2;
-            const cardId = 'B3E05225';
-            // Proceed with user creation
-            const hashedPassword = bcrypt.hashSync(password, 8);
-            connection.query(
-              "INSERT INTO user (UserID, Username, Name, Surname, RoleID, CardID, Email, Password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-              [nextUserID, username, name, surname, roleId, cardId, email, hashedPassword],
-              callback
-            );
-          });
-
+          );
         }
       });
     }
@@ -66,24 +70,9 @@ UserModel.getUserByUsername = (username, callback) => {
 };
 
 UserModel.getUserByEmail = (email, callback) => {
-  connection.query(
-    "SELECT * FROM user WHERE Email = ?",
-    [email],
-    (err, result) => {
-      if (err) {
-        return callback(err, null);
-      }
-      // Return the user data if found
-      if (result.length > 0) {
-        return callback(null, result[0]); // Assuming email is unique, return the first user found
-      } else {
-        return callback(null, null); // If no user found, return null
-      }
-    }
-  );
+  connection.query("SELECT * FROM user WHERE Email = ?", [email], callback);
 };
 
-// Get user data by ID
 UserModel.getUserById = (userId, callback) => {
   connection.query(
     "SELECT * FROM user WHERE UserID = ?",
@@ -100,15 +89,7 @@ UserModel.getUserById = (userId, callback) => {
   );
 };
 
-// Update user details
-UserModel.updateUser = (
-  userId,
-  username,
-  name,
-  surname,
-  email,
-  callback
-) => {
+UserModel.updateUser = (userId, username, name, surname, email, callback) => {
   connection.query(
     "UPDATE user SET Username = ?, Name = ?, Surname = ?, Email = ? WHERE UserID = ?",
     [username, name, surname, email, userId],
@@ -116,9 +97,7 @@ UserModel.updateUser = (
   );
 };
 
-// Update user password
 UserModel.changePassword = (userId, newPassword, callback) => {
-  // Hash the new password
   const hashedPassword = bcrypt.hashSync(newPassword, 8);
   connection.query(
     "UPDATE user SET Password = ? WHERE UserID = ?",
@@ -127,11 +106,8 @@ UserModel.changePassword = (userId, newPassword, callback) => {
   );
 };
 
-// Update user password
 UserModel.updatePassword = (email, newPassword, callback) => {
-  // Hash the new password
   const hashedPassword = bcrypt.hashSync(newPassword, 8);
-
   connection.query(
     "UPDATE user SET Password = ? WHERE Email = ?",
     [hashedPassword, email],
@@ -142,7 +118,7 @@ UserModel.updatePassword = (email, newPassword, callback) => {
 // Save reset code in the database
 UserModel.saveResetCode = (email, resetCode, callback) => {
   connection.query(
-    "INSERT INTO reset_codes (Email, ResetCode) VALUES (?, ?)",
+    "INSERT INTO reset_codes (email, reset_code) VALUES (?, ?)",
     [email, resetCode],
     callback
   );
@@ -152,7 +128,7 @@ UserModel.saveResetCode = (email, resetCode, callback) => {
 UserModel.isValidResetCode = (email, resetCode) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT * FROM reset_codes WHERE Email = ? AND ResetCode = ?",
+      "SELECT * FROM reset_codes WHERE email = ? AND reset_code = ?",
       [email, resetCode],
       (err, result) => {
         if (err) {
@@ -168,7 +144,7 @@ UserModel.isValidResetCode = (email, resetCode) => {
 // Delete reset code from the database
 UserModel.deleteResetCode = (email, callback) => {
   connection.query(
-    "DELETE FROM reset_codes WHERE Email = ?",
+    "DELETE FROM reset_codes WHERE email = ?",
     [email],
     callback
   );
