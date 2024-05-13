@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/rfid_card.dart';
 import 'package:frontend/controllers/dashboard_controller.dart';
+import 'package:frontend/models/log.dart';
 import 'package:frontend/models/user_profile.dart';
 
 class DashboardView extends StatefulWidget {
@@ -13,11 +14,13 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   UserProfile? _userProfile;
   String _errorMessage = '';
+  List<Log> _logs = [];
 
   @override
   void initState() {
     super.initState();
     _fetchDashboardData();
+    _fetchLogs();
   }
 
   Future<void> _fetchDashboardData() async {
@@ -25,6 +28,20 @@ class _DashboardViewState extends State<DashboardView> {
       UserProfile userProfile = await DashboardController.fetchDashboardData();
       setState(() {
         _userProfile = userProfile;
+        _errorMessage = ''; // Clear error message if data is successfully fetched
+      });
+    } catch (error) {
+      setState(() {
+        _errorMessage = 'Error: $error';
+      });
+    }
+  }
+
+  Future<void> _fetchLogs() async {
+    try {
+      Log log = await DashboardController.fetchLogsData();
+      setState(() {
+        _logs = [log]; // Store the single log object in a list
         _errorMessage = ''; // Clear error message if data is successfully fetched
       });
     } catch (error) {
@@ -53,8 +70,17 @@ class _DashboardViewState extends State<DashboardView> {
             child: Center(
               child: _errorMessage.isNotEmpty
                   ? Text(_errorMessage)
-                  : _userProfile != null
-                      ? Text('UserID: ${_userProfile!.userID}, Email: ${_userProfile!.email}') // Example display
+                  : _logs.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: _logs.length,
+                          itemBuilder: (context, index) {
+                            Log log = _logs[index];
+                            return ListTile(
+                              title: Text('Gate: ${log.gateName}'),
+                              subtitle: Text('Direction: ${log.direction}, Time: ${log.timeStamp}'),
+                            );
+                          },
+                        )
                       : const CircularProgressIndicator(),
             ),
           ),

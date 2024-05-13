@@ -23,15 +23,15 @@ class Log {
 
   factory Log.fromJson(Map<String, dynamic> json) {
     return Log(
-      logID: json['LogID'],
-      userID: json['UserID'],
-      timeStamp: json['TimseStamp'],
-      date: json['Date'],
-      gateID: json['GateID'],
-      direction: json['Direction'],
-      cardID: json['CardID'],
-      gateName: json['GateName'],
-      location: json['Location'],
+      logID: json['LogID'] ?? 0, // Provide a default value if null
+      userID: json['UserID'] ?? 0,
+      timeStamp: json['TimseStamp'] ?? '', // Provide an empty string if null
+      date: json['Date'] ?? '',
+      gateID: json['GateID'] ?? 0,
+      direction: json['Direction'] ?? '',
+      cardID: json['CardID'] ?? '',
+      gateName: json['GateName'] ?? '',
+      location: json['Location'] ?? '',
     );
   }
 }

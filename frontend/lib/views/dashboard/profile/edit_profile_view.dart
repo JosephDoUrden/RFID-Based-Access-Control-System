@@ -99,7 +99,9 @@ class _EditProfileViewState extends State<EditProfileView> {
           content: Text('Failed to update profile: $error'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                Navigator.pop(context);
+              },
               child: const Text('OK'),
             ),
           ],
