@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/rfid_card.dart';
 import 'package:frontend/controllers/dashboard_controller.dart';
+import 'package:frontend/models/user_profile.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> {
-  String _dashboardData = '';
+  UserProfile? _userProfile;
   String _errorMessage = '';
 
   @override
@@ -21,9 +22,10 @@ class _DashboardViewState extends State<DashboardView> {
 
   Future<void> _fetchDashboardData() async {
     try {
-      String dashboardData = await DashboardController.fetchDashboardData();
+      UserProfile userProfile = await DashboardController.fetchDashboardData();
       setState(() {
-        _dashboardData = dashboardData;
+        _userProfile = userProfile;
+        _errorMessage = ''; // Clear error message if data is successfully fetched
       });
     } catch (error) {
       setState(() {
@@ -36,19 +38,25 @@ class _DashboardViewState extends State<DashboardView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 20),
-          const RfidCard(
-            cardNumber: '1234 5678 9012 3456',
-            cardHolder: 'John Doe',
-            expiryDate: '10/25',
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: RfidCard(
+              cardNumber: _userProfile?.cardID ?? 'N/A',
+              cardHolder: '${_userProfile?.name ?? 'N/A'} ${_userProfile?.surname ?? 'N/A'}',
+            ),
           ),
-          Center(
-            child: _errorMessage.isNotEmpty
-                ? Text(_errorMessage)
-                : _dashboardData.isNotEmpty
-                    ? Text(_dashboardData)
-                    : const CircularProgressIndicator(),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Center(
+              child: _errorMessage.isNotEmpty
+                  ? Text(_errorMessage)
+                  : _userProfile != null
+                      ? Text('UserID: ${_userProfile!.userID}, Email: ${_userProfile!.email}') // Example display
+                      : const CircularProgressIndicator(),
+            ),
           ),
         ],
       ),
