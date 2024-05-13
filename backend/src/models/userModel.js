@@ -118,7 +118,7 @@ UserModel.updatePassword = (email, newPassword, callback) => {
 // Save reset code in the database
 UserModel.saveResetCode = (email, resetCode, callback) => {
   connection.query(
-    "INSERT INTO reset_codes (email, reset_code) VALUES (?, ?)",
+    "INSERT INTO reset_codes (Email, ResetCode) VALUES (?, ?)",
     [email, resetCode],
     callback
   );
@@ -128,7 +128,7 @@ UserModel.saveResetCode = (email, resetCode, callback) => {
 UserModel.isValidResetCode = (email, resetCode) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT * FROM reset_codes WHERE email = ? AND reset_code = ?",
+      "SELECT * FROM reset_codes WHERE Email = ? AND ResetCode = ?",
       [email, resetCode],
       (err, result) => {
         if (err) {
@@ -144,7 +144,7 @@ UserModel.isValidResetCode = (email, resetCode) => {
 // Delete reset code from the database
 UserModel.deleteResetCode = (email, callback) => {
   connection.query(
-    "DELETE FROM reset_codes WHERE email = ?",
+    "DELETE FROM reset_codes WHERE Email = ?",
     [email],
     callback
   );
