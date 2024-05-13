@@ -39,9 +39,9 @@ class _DashboardViewState extends State<DashboardView> {
 
   Future<void> _fetchLogs() async {
     try {
-      Log log = await DashboardController.fetchLogsData();
+      List<Log> logs = await DashboardController.fetchLogsData();
       setState(() {
-        _logs = [log]; // Store the single log object in a list
+        _logs = logs;
         _errorMessage = ''; // Clear error message if data is successfully fetched
       });
     } catch (error) {

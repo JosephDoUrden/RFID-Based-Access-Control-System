@@ -36,7 +36,7 @@ class DashboardController {
     }
   }
 
-  static Future<Log> fetchLogsData() async {
+  static Future<List<Log>> fetchLogsData() async {
     try {
       final token = await _getToken();
       final response = await http.get(
@@ -45,10 +45,10 @@ class DashboardController {
       );
 
       if (response.statusCode == 200) {
-        final dynamic jsonData = jsonDecode(response.body);
-
-        // Parse the single log object
-        return Log.fromJson(jsonData);
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        // Parse the list of logs
+        List<Log> logs = jsonData.map((log) => Log.fromJson(log)).toList();
+        return logs;
       } else {
         throw Exception('Failed to load logs data: ${response.statusCode}');
       }
