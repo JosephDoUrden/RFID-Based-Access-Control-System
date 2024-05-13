@@ -95,7 +95,7 @@ UserModel.updateUser = (
   callback
 ) => {
   connection.query(
-    "UPDATE users SET Username = ?, Name = ?, Surname = ?, Email = ? WHERE UserID = ?",
+    "UPDATE user SET Username = ?, Name = ?, Surname = ?, Email = ? WHERE UserID = ?",
     [username, name, surname, email, userId],
     callback
   );
