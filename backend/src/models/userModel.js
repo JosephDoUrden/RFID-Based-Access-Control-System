@@ -11,12 +11,12 @@ UserModel.createUser = (
   password,
   callback
 ) => {
-  // Check if username or email already exists
+  // Check if username or email already exists  
   UserModel.getUserByUsername(username, (err, existingUsername) => {
     if (err) {
       return callback(err);
     }
-    if (existingUsername.length > 0) {
+    if (existingUsername && existingUsername.length > 0) {
       // Username already exists
       return callback("Username already taken");
     } else {
@@ -25,17 +25,32 @@ UserModel.createUser = (
         if (err) {
           return callback(err);
         }
-        if (existingEmail.length > 0) {
+        if (existingEmail && existingEmail.length > 0) {
           // Email already exists
           return callback("Email already registered");
         } else {
           // Proceed with user creation
-          const hashedPassword = bcrypt.hashSync(password, 8);
-          connection.query(
-            "INSERT INTO user (Username, Name, Surname, Email, Password) VALUES (?, ?, ?, ?, ?)",
-            [username, name, surname, email, hashedPassword],
-            callback
-          );
+          // Get the last UserID from the database
+          connection.query("SELECT MAX(UserID) AS LastUserID FROM user", (err, result) => {
+            if (err) {
+              // Handle error
+              return callback(err);
+            }
+            // Extract the last UserID
+            const lastUserID = result[0].LastUserID;
+            // Increment it by one
+            const nextUserID = lastUserID + 1;
+            const roleId = 2;
+            const cardId = 'B3E05225';
+            // Proceed with user creation
+            const hashedPassword = bcrypt.hashSync(password, 8);
+            connection.query(
+              "INSERT INTO user (UserID, Username, Name, Surname, RoleID, CardID, Email, Password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              [nextUserID, username, name, surname, roleId, cardId, email, hashedPassword],
+              callback
+            );
+          });
+
         }
       });
     }
