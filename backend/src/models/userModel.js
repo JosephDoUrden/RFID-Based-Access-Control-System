@@ -153,7 +153,7 @@ UserModel.deleteResetCode = (email, callback) => {
 // Get user log data by ID
 UserModel.getUserLogById = (userId, callback) => {
   connection.query(
-    "SELECT access_log.*, gate.gatename, gate.gate_location FROM access_log JOIN gate ON access_log.gateid = gate.gateid WHERE access_log.UserID = ?",
+    "SELECT access_log.*, gate.GateName, gate.Location FROM access_log JOIN gate ON access_log.GateID = gate.GateID WHERE access_log.UserID = ?",
     [userId],
     (err, log) => {
       if (err) {

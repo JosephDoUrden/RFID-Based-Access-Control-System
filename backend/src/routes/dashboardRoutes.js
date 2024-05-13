@@ -28,6 +28,14 @@ router.get("/logs", requireAuth, (req, res) => {
     if (!userLogData) {
       return res.status(404).json({ error: "User not found" });
     }
+    const formatTimestamp = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleString('tr-TR', { timeZone: 'UTC' }); // Adjust timezone as needed
+    };
+    
+    // Update timestamps in userLogData
+    userLogData.TimseStamp = formatTimestamp(userLogData.TimseStamp);
+    userLogData.Date = formatTimestamp(userLogData.Date);
     // Return user log data
     res.status(200).json(userLogData);
   });
