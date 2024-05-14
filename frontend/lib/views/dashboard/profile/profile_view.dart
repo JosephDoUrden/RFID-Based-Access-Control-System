@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/controllers/profile_controller.dart';
 import 'package:frontend/views/dashboard/profile/change_password_view.dart';
 import 'package:frontend/views/dashboard/profile/edit_profile_view.dart';
@@ -25,8 +24,8 @@ class _ProfileViewState extends State<ProfileView> {
     try {
       return await ProfileController.fetchProfileData();
     } catch (error) {
-      // Handle error
-      return {};
+      // Handle error gracefully
+      return {'error': 'Failed to fetch profile data'};
     }
   }
 
@@ -40,80 +39,114 @@ class _ProfileViewState extends State<ProfileView> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (snapshot.hasError || snapshot.data!['error'] != null) {
+              return Center(child: Text('Error: ${snapshot.data!['error'] ?? snapshot.error}'));
             } else {
               final profileData = snapshot.data!;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildProfileItem(
-                    label: 'Username',
-                    value: profileData['username'],
-                  ),
-                  _buildProfileItem(
-                    label: 'Full Name',
-                    value: '${profileData['firstname']} ${profileData['lastname']}',
-                  ),
-                  _buildProfileItem(
-                    label: 'Email',
-                    value: profileData['email'],
+                  SizedBox(
+                    width: double.infinity,
+                    child: Card(
+                      color: Colors.white,
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Center(
+                              child: CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage('https://picsum.photos/id/1/200/300'),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _buildProfileItem(
+                              label: 'Username',
+                              value: profileData['Username'] ?? '',
+                            ),
+                            _buildProfileItem(
+                              label: 'Full Name',
+                              value: '${profileData['Name']} ${profileData['Surname']}',
+                            ),
+                            _buildProfileItem(
+                              label: 'Email',
+                              value: profileData['Email'] ?? '',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
                                   builder: (context) => EditProfileView(
-                                        username: profileData['username'],
-                                        firstname: profileData['firstname'],
-                                        lastname: profileData['lastname'],
-                                        email: profileData['email'],
-                                      )));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                                    username: profileData['Username'] ?? '',
+                                    firstname: profileData['Name'] ?? '',
+                                    lastname: profileData['Surname'] ?? '',
+                                    email: profileData['Email'] ?? '',
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              backgroundColor: Colors.blue[900],
+                            ),
+                            icon: const Icon(Icons.edit, color: Colors.white),
+                            label: const Text('Edit Profile', style: TextStyle(fontSize: 16.0, color: Colors.white)),
                           ),
-                          backgroundColor: Colors.blue[900],
-                        ),
-                        child: const Text('Edit Profile', style: TextStyle(fontSize: 16.0, color: Colors.white)),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) => const ChangePasswordView()));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              backgroundColor: Colors.blue[900],
+                            ),
+                            icon: const Icon(Icons.lock, color: Colors.white),
+                            label: const Text('Change Password', style: TextStyle(fontSize: 16.0, color: Colors.white)),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordView()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                      const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.topRight,
+                        widthFactor: 3.12,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            _showLogoutConfirmationDialog(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            backgroundColor: Colors.red,
                           ),
-                          backgroundColor: Colors.blue[900],
+                          icon: const Icon(Icons.logout, color: Colors.white),
+                          label: const Text(
+                            'Logout',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                        child: const Text('Change Password', style: TextStyle(fontSize: 16.0, color: Colors.white)),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    widthFactor: 3.5,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _showLogoutConfirmationDialog(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                      child: const Text('Logout', style: TextStyle(fontSize: 16.0, color: Colors.white)),
-                    ),
                   ),
                 ],
               );
@@ -127,24 +160,9 @@ class _ProfileViewState extends State<ProfileView> {
   Widget _buildProfileItem({required String label, required String value}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
+      child: Text(
+        '$label: $value',
+        style: const TextStyle(fontSize: 16),
       ),
     );
   }

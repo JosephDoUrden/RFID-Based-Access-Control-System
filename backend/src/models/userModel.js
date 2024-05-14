@@ -3,20 +3,13 @@ const bcrypt = require("bcryptjs");
 
 const UserModel = {};
 
-UserModel.createUser = (
-  username,
-  firstname,
-  lastname,
-  email,
-  password,
-  callback
-) => {
+UserModel.createUser = (username, name, surname, email, password, callback) => {
   // Check if username or email already exists
   UserModel.getUserByUsername(username, (err, existingUsername) => {
     if (err) {
       return callback(err);
     }
-    if (existingUsername.length > 0) {
+    if (existingUsername && existingUsername.length > 0) {
       // Username already exists
       return callback("Username already taken");
     } else {
@@ -25,16 +18,42 @@ UserModel.createUser = (
         if (err) {
           return callback(err);
         }
-        if (existingEmail.length > 0) {
+        if (existingEmail && existingEmail.length > 0) {
           // Email already exists
           return callback("Email already registered");
         } else {
           // Proceed with user creation
-          const hashedPassword = bcrypt.hashSync(password, 8);
+          // Get the last UserID from the database
           connection.query(
-            "INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)",
-            [username, firstname, lastname, email, hashedPassword],
-            callback
+            "SELECT MAX(UserID) AS LastUserID FROM user",
+            (err, result) => {
+              if (err) {
+                // Handle error
+                return callback(err);
+              }
+              // Extract the last UserID
+              const lastUserID = result[0].LastUserID;
+              // Increment it by one
+              const nextUserID = lastUserID + 1;
+              const roleId = 2;
+              const cardId = "B3E05225";
+              // Proceed with user creation
+              const hashedPassword = bcrypt.hashSync(password, 8);
+              connection.query(
+                "INSERT INTO user (UserID, Username, Name, Surname, RoleID, CardID, Email, Password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                  nextUserID,
+                  username,
+                  name,
+                  surname,
+                  roleId,
+                  cardId,
+                  email,
+                  hashedPassword,
+                ],
+                callback
+              );
+            }
           );
         }
       });
@@ -44,34 +63,19 @@ UserModel.createUser = (
 
 UserModel.getUserByUsername = (username, callback) => {
   connection.query(
-    "SELECT * FROM users WHERE username = ?",
+    "SELECT * FROM user WHERE Username = ?",
     [username],
     callback
   );
 };
 
 UserModel.getUserByEmail = (email, callback) => {
-  connection.query(
-    "SELECT * FROM users WHERE email = ?",
-    [email],
-    (err, result) => {
-      if (err) {
-        return callback(err, null);
-      }
-      // Return the user data if found
-      if (result.length > 0) {
-        return callback(null, result[0]); // Assuming email is unique, return the first user found
-      } else {
-        return callback(null, null); // If no user found, return null
-      }
-    }
-  );
+  connection.query("SELECT * FROM user WHERE Email = ?", [email], callback);
 };
 
-// Get user data by ID
 UserModel.getUserById = (userId, callback) => {
   connection.query(
-    "SELECT * FROM users WHERE id = ?",
+    "SELECT * FROM user WHERE UserID = ?",
     [userId],
     (err, user) => {
       if (err) {
@@ -85,40 +89,27 @@ UserModel.getUserById = (userId, callback) => {
   );
 };
 
-// Update user details
-UserModel.updateUser = (
-  userId,
-  username,
-  firstname,
-  lastname,
-  email,
-  callback
-) => {
+UserModel.updateUser = (userId, username, name, surname, email, callback) => {
   connection.query(
-    "UPDATE users SET username = ?, firstname = ?, lastname = ?, email = ? WHERE id = ?",
-    [username, firstname, lastname, email, userId],
+    "UPDATE user SET Username = ?, Name = ?, Surname = ?, Email = ? WHERE UserID = ?",
+    [username, name, surname, email, userId],
     callback
   );
 };
 
-// Update user password
 UserModel.changePassword = (userId, newPassword, callback) => {
-  // Hash the new password
   const hashedPassword = bcrypt.hashSync(newPassword, 8);
   connection.query(
-    "UPDATE users SET password = ? WHERE id = ?",
+    "UPDATE user SET Password = ? WHERE UserID = ?",
     [hashedPassword, userId],
     callback
   );
 };
 
-// Update user password
 UserModel.updatePassword = (email, newPassword, callback) => {
-  // Hash the new password
   const hashedPassword = bcrypt.hashSync(newPassword, 8);
-
   connection.query(
-    "UPDATE users SET password = ? WHERE email = ?",
+    "UPDATE user SET Password = ? WHERE Email = ?",
     [hashedPassword, email],
     callback
   );
@@ -127,7 +118,7 @@ UserModel.updatePassword = (email, newPassword, callback) => {
 // Save reset code in the database
 UserModel.saveResetCode = (email, resetCode, callback) => {
   connection.query(
-    "INSERT INTO reset_codes (email, reset_code) VALUES (?, ?)",
+    "INSERT INTO reset_codes (Email, ResetCode) VALUES (?, ?)",
     [email, resetCode],
     callback
   );
@@ -137,7 +128,7 @@ UserModel.saveResetCode = (email, resetCode, callback) => {
 UserModel.isValidResetCode = (email, resetCode) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT * FROM reset_codes WHERE email = ? AND reset_code = ?",
+      "SELECT * FROM reset_codes WHERE Email = ? AND ResetCode = ?",
       [email, resetCode],
       (err, result) => {
         if (err) {
@@ -153,9 +144,24 @@ UserModel.isValidResetCode = (email, resetCode) => {
 // Delete reset code from the database
 UserModel.deleteResetCode = (email, callback) => {
   connection.query(
-    "DELETE FROM reset_codes WHERE email = ?",
+    "DELETE FROM reset_codes WHERE Email = ?",
     [email],
     callback
+  );
+};
+
+// Get user log data by ID
+UserModel.getUserLogById = (userId, callback) => {
+  connection.query(
+    "SELECT access_log.*, gate.GateName, gate.Location FROM access_log JOIN gate ON access_log.GateID = gate.GateID WHERE access_log.UserID = ?",
+    [userId],
+    (err, logs) => {
+      if (err) {
+        return callback(err);
+      }
+      // Return logs data
+      callback(null, logs);
+    }
   );
 };
 

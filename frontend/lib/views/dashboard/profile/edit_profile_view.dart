@@ -80,10 +80,10 @@ class _EditProfileViewState extends State<EditProfileView> {
   Future<void> _updateProfile() async {
     try {
       final Map<String, dynamic> profileData = {
-        'username': _usernameController.text,
-        'firstname': _firstNameController.text,
-        'lastname': _lastNameController.text,
-        'email': _emailController.text,
+        'Username': _usernameController.text,
+        'Name': _firstNameController.text,
+        'Surname': _lastNameController.text,
+        'Email': _emailController.text,
       };
 
       await ProfileController.updateProfile(profileData);
@@ -99,7 +99,9 @@ class _EditProfileViewState extends State<EditProfileView> {
           content: Text('Failed to update profile: $error'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                Navigator.pop(context);
+              },
               child: const Text('OK'),
             ),
           ],

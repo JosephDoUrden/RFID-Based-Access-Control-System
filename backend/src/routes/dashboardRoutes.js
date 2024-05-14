@@ -3,20 +3,42 @@ const router = express.Router();
 const { requireAuth } = require("../middleware/authMiddleware");
 const UserModel = require("../models/userModel");
 
+// Route to get user profile data
 router.get("/", requireAuth, (req, res) => {
-  // Eğer kullanıcı giriş yaptıysa, erişim izni ver
-  //res.status(200).send("Dashboard Page - Only accessible by logged-in users");
-  const user = UserModel.getUserByEmail(
-    "yusufhansacak@icloud.com",
-    (err, user) => {
-      if (err) {
-        console.error("Error:", err);
-        return;
-      }
-      console.log("User:", user);
-      res.status(200).send(user);
+  // Get user data based on user ID stored in req.userId
+  UserModel.getUserById(req.userId, (err, userData) => {
+    if (err) {
+      return res.status(500).json({ error: "Internal Server Error" });
     }
-  );
+    if (!userData) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    // Return user data
+    res.status(200).json(userData);
+  });
+});
+
+// Route to get user logs
+router.get("/logs", requireAuth, (req, res) => {
+  //get user logs based on user ID stored in req.userId
+  UserModel.getUserLogById(req.userId, (err, userLogData) => {
+    if (err) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    if (!userLogData) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const formatTimestamp = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleString("tr-TR", { timeZone: "UTC" }); // Adjust timezone as needed
+    };
+
+    // Update timestamps in userLogData
+    userLogData.TimseStamp = formatTimestamp(userLogData.TimseStamp);
+    userLogData.Date = formatTimestamp(userLogData.Date);
+    // Return user log data
+    res.status(200).json(userLogData);
+  });
 });
 
 module.exports = router;

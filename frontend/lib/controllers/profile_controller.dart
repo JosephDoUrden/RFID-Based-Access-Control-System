@@ -44,7 +44,12 @@ class ProfileController {
           'Authorization': token,
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(profileData),
+        body: jsonEncode({
+          'username': profileData['Username'],
+          'name': profileData['Name'],
+          'surname': profileData['Surname'],
+          'email': profileData['Email'],
+        }),
       );
 
       if (response.statusCode == 200) {

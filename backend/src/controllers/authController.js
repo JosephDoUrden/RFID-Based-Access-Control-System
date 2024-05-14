@@ -6,11 +6,11 @@ const Mailer = require("../config/mailer");
 const AuthController = {};
 
 AuthController.register = (req, res) => {
-  const { username, firstname, lastname, email, password } = req.body;
+  const { username, name, surname, email, password } = req.body;
   UserModel.createUser(
     username,
-    firstname,
-    lastname,
+    name,
+    surname,
     email,
     password,
     (err, results) => {
@@ -32,20 +32,43 @@ AuthController.register = (req, res) => {
 
 AuthController.login = (req, res) => {
   const { username, password } = req.body;
+  console.log("Received username:", username);
+  console.log("Received password:", password);
+
   UserModel.getUserByUsername(username, (err, results) => {
     if (err) {
       console.error(err);
       res.status(500).send("Login failed");
       return;
     }
-    if (
-      results.length === 0 ||
-      !bcrypt.compareSync(password, results[0].password)
-    ) {
+    console.log("User data from database:", results);
+
+    if (results.length === 0) {
+      console.log("Invalid username or password - no user data found");
       res.status(401).send("Invalid username or password");
       return;
     }
-    const token = jwt.sign({ id: results[0].id }, "secretkey", {
+
+    const user = results[0];
+    if (!user.Password) {
+      console.log(
+        "Invalid username or password - password not found in user data"
+      );
+      res.status(401).send("Invalid username or password");
+      return;
+    }
+
+    const hashedPassword = user.Password;
+    console.log("Hashed password from database:", hashedPassword);
+
+    if (!bcrypt.compareSync(password, hashedPassword)) {
+      console.log("Invalid username or password - password comparison failed");
+      res.status(401).send("Invalid username or password");
+      return;
+    }
+
+    console.log("User authenticated successfully!");
+    const token = jwt.sign({ id: user.UserID }, "secretkey", {
       expiresIn: 86400, // Expires in 24 hours
     });
     res.status(200).send({ auth: true, token: token });

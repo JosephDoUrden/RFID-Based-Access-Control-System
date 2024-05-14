@@ -23,13 +23,13 @@ router.get("/", requireAuth, (req, res) => {
 
 // Route to update user profile
 router.put("/", requireAuth, (req, res) => {
-  const { username, firstname, lastname, email } = req.body;
+  const { username, name, surname, email } = req.body;
   // Update user details in the database
   UserModel.updateUser(
     req.userId,
     username,
-    firstname,
-    lastname,
+    name,
+    surname,
     email,
     (err, updatedUser) => {
       if (err) {
@@ -50,19 +50,26 @@ router.put("/", requireAuth, (req, res) => {
 router.put("/change-password", requireAuth, (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
+  // Check if old and new passwords are provided
+  if (!oldPassword || !newPassword) {
+    return res
+      .status(400)
+      .json({ error: "Old and new passwords are required" });
+  }
+
   // First, retrieve the user's current password from the database
   UserModel.getUserById(req.userId, (err, user) => {
     if (err) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error: "Failed to retrieve user data" });
     }
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
     // Compare the old password provided by the user with the password stored in the database
-    bcrypt.compare(oldPassword, user.password, (err, isMatch) => {
+    bcrypt.compare(oldPassword, user.Password, (err, isMatch) => {
       if (err) {
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: "Failed to compare passwords" });
       }
       if (!isMatch) {
         // If the old password provided does not match the one stored in the database
@@ -72,7 +79,7 @@ router.put("/change-password", requireAuth, (req, res) => {
       // If the old password is correct, proceed to update the password
       UserModel.changePassword(req.userId, newPassword, (err) => {
         if (err) {
-          return res.status(500).json({ error: "Internal Server Error" });
+          return res.status(500).json({ error: "Failed to update password" });
         }
         // Return success message
         res

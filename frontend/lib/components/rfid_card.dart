@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 class RfidCard extends StatelessWidget {
   final String cardNumber;
   final String cardHolder;
-  final String expiryDate;
 
   const RfidCard({
     Key? key,
     required this.cardNumber,
     required this.cardHolder,
-    required this.expiryDate,
   }) : super(key: key);
 
   @override
@@ -41,22 +39,27 @@ class RfidCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Text(
-            'Card Number: $cardNumber',
-            style: const TextStyle(color: Colors.white),
-          ),
+          _buildCardInfo('Card ID', cardNumber),
           const SizedBox(height: 10),
-          Text(
-            'Card Holder: $cardHolder',
-            style: const TextStyle(color: Colors.white),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Expiry Date: $expiryDate',
-            style: const TextStyle(color: Colors.white),
-          ),
+          _buildCardInfo('Card Holder', cardHolder),
         ],
       ),
+    );
+  }
+
+  Widget _buildCardInfo(String title, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(color: Colors.white),
+        ),
+        Text(
+          value,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ],
     );
   }
 }
