@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/controllers/dashboard_controller.dart';
 import 'package:frontend/models/log.dart';
-import 'package:frontend/models/user_profile.dart';
+import 'package:intl/date_symbol_data_local.dart'; // Import for date formatting
+import 'package:intl/intl.dart';
 
 class AccessLogsView extends StatefulWidget {
-  const AccessLogsView({super.key});
+  const AccessLogsView({Key? key}) : super(key: key);
 
   @override
   State<AccessLogsView> createState() => _AccessLogsViewState();
@@ -35,44 +35,60 @@ class _AccessLogsViewState extends State<AccessLogsView> {
     }
   }
 
+  // Method to format the timestamp into Turkish time format
+  String formatTimestamp(String timestamp) {
+    DateTime dateTime = DateTime.parse(timestamp);
+    var formatter = DateFormat('dd.MM.yyyy HH:mm', 'tr_TR'); // Turkish time format
+    String formattedDate = formatter.format(dateTime);
+    return formattedDate;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Initialize locale data for date formatting
+    initializeDateFormatting('tr_TR');
+
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Access Logs',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-          ),
-          Expanded(
-            child: Center(
-              child: _errorMessage.isNotEmpty
-                  ? Text(_errorMessage)
-                  : _logs.isNotEmpty
-                      ? ListView.builder(
-                          itemCount: _logs.length,
-                          itemBuilder: (context, index) {
-                            Log log = _logs[_logs.length - index - 1]; // Start from the last log in the list
-                            return Card(
-                              color: Colors.grey[200],
-                              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                              elevation: 2,
-                              child: ListTile(
-                                title: Text('Gate: ${log.gateName}'),
-                                subtitle: Text('Direction: ${log.direction}, Time: ${log.timeStamp}'),
-                              ),
-                            );
-                          },
-                        )
-                      : const CircularProgressIndicator(),
-            ),
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text(
+          'Access Logs',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
+      body: _errorMessage.isNotEmpty
+          ? Center(
+              child: Text(
+                _errorMessage,
+                style: const TextStyle(color: Colors.red),
+              ),
+            )
+          : _logs.isNotEmpty
+              ? ListView.builder(
+                  itemCount: _logs.length,
+                  itemBuilder: (context, index) {
+                    Log log = _logs[_logs.length - index - 1]; // Start from the last log in the list
+                    String formattedTimestamp = formatTimestamp(log.timeStamp);
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: Card(
+                        elevation: 2,
+                        child: ListTile(
+                          title: Text(
+                            'Gate: ${log.gateName}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            'Direction: ${log.direction}\nTime: $formattedTimestamp',
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
     );
   }
 }

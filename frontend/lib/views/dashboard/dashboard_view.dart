@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart'; // Import for date formatting
 import 'package:frontend/components/rfid_card.dart';
 import 'package:frontend/controllers/dashboard_controller.dart';
 import 'package:frontend/models/log.dart';
@@ -51,8 +53,19 @@ class _DashboardViewState extends State<DashboardView> {
     }
   }
 
+  // Method to format the timestamp into Turkish time format
+  String formatTimestamp(String timestamp) {
+    DateTime dateTime = DateTime.parse(timestamp);
+    var formatter = DateFormat('dd.MM.yyyy HH:mm', 'tr_TR'); // Turkish time format
+    String formattedDate = formatter.format(dateTime);
+    return formattedDate;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Initialize locale data for date formatting
+    initializeDateFormatting('tr_TR');
+
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -69,9 +82,9 @@ class _DashboardViewState extends State<DashboardView> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              'Last 3 Passes',
+              'Last 3 Activities',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -79,21 +92,24 @@ class _DashboardViewState extends State<DashboardView> {
           Expanded(
             child: Center(
               child: _errorMessage.isNotEmpty
-                  ? Text(_errorMessage)
+                  ? Text(
+                      _errorMessage,
+                      style: const TextStyle(color: Colors.red),
+                    )
                   : _logs.isNotEmpty
                       ? ListView.builder(
-                          itemCount: _logs.length > 3
-                              ? 3
-                              : _logs.length, // Display only the last three logs or less if there are fewer logs
+                          itemCount: _logs.length > 3 ? 3 : _logs.length,
                           itemBuilder: (context, index) {
-                            Log log = _logs[_logs.length - index - 1]; // Start from the last log in the list
-                            return Card(
-                              color: Colors.grey[200],
-                              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                              elevation: 2,
-                              child: ListTile(
-                                title: Text('Gate: ${log.gateName}'),
-                                subtitle: Text('Direction: ${log.direction}, Time: ${log.timeStamp}'),
+                            Log log = _logs[_logs.length - index - 1];
+                            String formattedTimestamp = formatTimestamp(log.timeStamp);
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                              child: Card(
+                                elevation: 2,
+                                child: ListTile(
+                                  title: Text('Gate: ${log.gateName}'),
+                                  subtitle: Text('Direction: ${log.direction}, Time: $formattedTimestamp'),
+                                ),
                               ),
                             );
                           },
