@@ -109,6 +109,7 @@ class _RegisterViewState extends State<RegisterView> {
       _errorMessage = '';
     });
 
+    // Validate if all fields are filled
     if (_usernameController.text.isEmpty ||
         _firstnameController.text.isEmpty ||
         _lastnameController.text.isEmpty ||
@@ -120,6 +121,7 @@ class _RegisterViewState extends State<RegisterView> {
       return;
     }
 
+    // Perform registration
     bool registered = await AuthController.register(
       _usernameController.text,
       _firstnameController.text,
@@ -128,6 +130,7 @@ class _RegisterViewState extends State<RegisterView> {
       _passwordController.text,
     );
 
+    // Handle registration result
     if (registered) {
       Navigator.pushReplacement(
         context,
