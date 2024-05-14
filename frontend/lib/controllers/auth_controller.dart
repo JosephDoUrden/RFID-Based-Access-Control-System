@@ -41,7 +41,7 @@ class AuthController {
 
   static Future<bool> login(String username, String password) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/api/auth/login'),
+      Uri.parse('http://195.35.28.226:3000/api/auth/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -69,7 +69,7 @@ class AuthController {
 
   static Future<bool> sendResetCode(String email) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/api/auth/forgot-password'),
+      Uri.parse('http://195.35.28.226:3000/api/auth/forgot-password'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -87,7 +87,7 @@ class AuthController {
 
   static Future<bool> resetPassword(String email, String resetCode, String newPassword) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/api/auth/reset-password'),
+      Uri.parse('http://195.35.28.226:3000/api/auth/reset-password'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

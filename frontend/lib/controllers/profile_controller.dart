@@ -13,7 +13,7 @@ class ProfileController {
       }
 
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/profile'),
+        Uri.parse('http://195.35.28.226:3000/api/profile'),
         headers: <String, String>{
           'Authorization': token,
         },
@@ -39,7 +39,7 @@ class ProfileController {
       }
 
       final response = await http.put(
-        Uri.parse('http://localhost:3000/api/profile'),
+        Uri.parse('http://195.35.28.226:3000/api/profile'),
         headers: <String, String>{
           'Authorization': token,
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ class ProfileController {
       }
 
       final response = await http.put(
-        Uri.parse('http://localhost:3000/api/profile/change-password'),
+        Uri.parse('http://195.35.28.226:3000/api/profile/change-password'),
         headers: <String, String>{
           'Authorization': token,
           'Content-Type': 'application/json',
