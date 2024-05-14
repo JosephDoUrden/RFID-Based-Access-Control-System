@@ -39,17 +39,27 @@ class RfidCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Text(
-            'Card ID: $cardNumber',
-            style: const TextStyle(color: Colors.white),
-          ),
+          _buildCardInfo('Card ID', cardNumber),
           const SizedBox(height: 10),
-          Text(
-            'Card Holder: $cardHolder',
-            style: const TextStyle(color: Colors.white),
-          ),
+          _buildCardInfo('Card Holder', cardHolder),
         ],
       ),
+    );
+  }
+
+  Widget _buildCardInfo(String title, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(color: Colors.white),
+        ),
+        Text(
+          value,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ],
     );
   }
 }
