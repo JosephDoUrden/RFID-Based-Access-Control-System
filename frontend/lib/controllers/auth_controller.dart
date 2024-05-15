@@ -6,36 +6,52 @@ class AuthController {
   static String? errorMessage;
 
   static Future<bool> register(
-      String username, String firstname, String lastname, String email, String password) async {
-    final response = await http.post(
-      Uri.parse('http://195.35.28.226:3000/api/auth/register'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'username': username,
-        'firstname': firstname,
-        'lastname': lastname,
-        'email': email,
-        'password': password,
-      }),
-    );
+    String username,
+    String firstname,
+    String lastname,
+    String email,
+    String password,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://195.35.28.226:3000/api/auth/register'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'username': username,
+          'name': firstname,
+          'surname': lastname,
+          'email': email,
+          'password': password,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      errorMessage = null;
-      return true;
-    } else {
-      switch (response.body) {
-        case "Username already taken":
-          errorMessage = 'Username already taken.';
-          break;
-        case "Email already registered":
-          errorMessage = 'Email already registered.';
-          break;
-        default:
-          errorMessage = 'Registration failed. Please try again.';
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        errorMessage = null;
+        return true;
+      } else {
+        // Handle different error scenarios
+        errorMessage = _parseErrorMessage(response.body);
+        return false;
       }
+    } catch (e) {
+      errorMessage = 'Error: $e';
       return false;
+    }
+  }
+
+  static String _parseErrorMessage(String responseBody) {
+    // You may need to adjust this logic based on the actual response format
+    if (responseBody.toLowerCase().contains('username')) {
+      return 'Username already taken.';
+    } else if (responseBody.toLowerCase().contains('email')) {
+      return 'Email already registered.';
+    } else {
+      return 'Registration failed. Please try again.';
     }
   }
 
