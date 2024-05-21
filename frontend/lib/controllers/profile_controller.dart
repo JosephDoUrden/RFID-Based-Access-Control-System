@@ -103,7 +103,7 @@ class ProfileController {
       }
 
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/profile/report-issue'),
+        Uri.parse('http://195.35.28.226:3000/api/profile/report-issue'),
         headers: <String, String>{
           'Authorization': token,
           'Content-Type': 'application/json',

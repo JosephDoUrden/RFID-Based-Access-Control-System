@@ -3,14 +3,7 @@ import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/controllers/profile_controller.dart';
 
 class ReportIssueView extends StatefulWidget {
-  const ReportIssueView({
-    Key? key,
-    required this.subject,
-    required this.issue,
-  }) : super(key: key);
-
-  final String subject;
-  final String issue;
+  const ReportIssueView({Key? key}) : super(key: key);
 
   @override
   _ReportIssueViewState createState() => _ReportIssueViewState();
@@ -19,12 +12,7 @@ class ReportIssueView extends StatefulWidget {
 class _ReportIssueViewState extends State<ReportIssueView> {
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _issueController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    _subjectController.text = widget.subject;
-    _issueController.text = widget.issue;
-  }
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,28 +21,24 @@ class _ReportIssueViewState extends State<ReportIssueView> {
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        title:
-            const Text('Report Issue', style: TextStyle(color: Colors.white)),
+        title: const Text('Report Issue', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue[900],
       ),
       backgroundColor: Colors.blue[900],
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            CustomTextField(
-                controller: _subjectController,
-                label: 'Subject',
-                icon: Icons.person),
-            const SizedBox(height: 10),
+            CustomTextField(controller: _subjectController, label: 'Subject', icon: Icons.subject),
+            const SizedBox(height: 20),
             TextField(
               controller: _issueController,
-              maxLines: 5, 
+              maxLines: 5,
               decoration: InputDecoration(
                 labelText: 'Issue',
-                prefixIcon: Icon(Icons.person),
+                prefixIcon: const Icon(Icons.report_problem),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -62,18 +46,20 @@ class _ReportIssueViewState extends State<ReportIssueView> {
                 fillColor: Colors.white,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _reportIssue,
+              onPressed: _isLoading ? null : _reportIssue,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 backgroundColor: Colors.white,
+                foregroundColor: Colors.blue[900],
               ),
-              child: Text('Submit',
-                  style: TextStyle(fontSize: 18.0, color: Colors.blue[900])),
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : const Text('Submit', style: TextStyle(fontSize: 18.0)),
             ),
           ],
         ),
@@ -82,16 +68,47 @@ class _ReportIssueViewState extends State<ReportIssueView> {
   }
 
   Future<void> _reportIssue() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final String subject = _subjectController.text;
       final String issue = _issueController.text;
 
+      if (subject.isEmpty || issue.isEmpty) {
+        throw Exception('All fields are required.');
+      }
+
       await ProfileController.reportIssue(subject, issue);
 
-      // Profile updated successfully, navigate back or show success message
-      Navigator.pop(context);
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Show success message
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Success'),
+          content: const Text('Issue reported successfully.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     } catch (error) {
-      // Handle error
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Show error message
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/controllers/profile_controller.dart';
 import 'package:frontend/views/dashboard/profile/change_password_view.dart';
 import 'package:frontend/views/dashboard/profile/edit_profile_view.dart';
+import 'package:frontend/views/dashboard/profile/manage_access_view.dart';
+import 'package:frontend/views/dashboard/profile/report_issue_view.dart';
 import 'package:frontend/views/login/login_view.dart';
 
 class ProfileView extends StatefulWidget {
@@ -43,24 +45,21 @@ class _ProfileViewState extends State<ProfileView> {
               return Center(child: Text('Error: ${snapshot.data!['error'] ?? snapshot.error}'));
             } else {
               final profileData = snapshot.data!;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: Card(
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Card(
                       color: Colors.white,
                       elevation: 4,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Center(
-                              child: CircleAvatar(
-                                radius: 50,
-                                backgroundImage: NetworkImage('https://picsum.photos/id/1/200/300'),
-                              ),
+                            const CircleAvatar(
+                              radius: 50,
+                              backgroundImage: NetworkImage('https://picsum.photos/id/1/200/300'),
                             ),
                             const SizedBox(height: 16),
                             _buildProfileItem(
@@ -79,79 +78,101 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton.icon(
+                    const SizedBox(height: 20),
+                    _buildButtonRow(
+                      context: context,
+                      buttons: [
+                        _buildButton(
+                          context: context,
+                          label: 'Edit Profile',
+                          icon: Icons.edit,
+                          color: Colors.blue[900] ?? Colors.blue,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfileView(
+                                  username: profileData['Username'] ?? '',
+                                  firstname: profileData['Name'] ?? '',
+                                  lastname: profileData['Surname'] ?? '',
+                                  email: profileData['Email'] ?? '',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildButton(
+                          context: context,
+                          label: 'Change Password',
+                          icon: Icons.lock,
+                          color: Colors.blue[900] ?? Colors.blue,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ChangePasswordView()),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    _buildButtonColumn(
+                      context: context,
+                      buttons: [
+                        _buildButton(
+                          context: context,
+                          label: 'Report an Issue',
+                          icon: Icons.report,
+                          color: Colors.black38,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ReportIssueView()),
+                            );
+                          },
+                        ),
+                        if (profileData['RoleID'] == 1)
+                          _buildButton(
+                            context: context,
+                            label: 'Manage Access',
+                            icon: Icons.admin_panel_settings,
+                            color: Colors.green,
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditProfileView(
-                                    username: profileData['Username'] ?? '',
-                                    firstname: profileData['Name'] ?? '',
-                                    lastname: profileData['Surname'] ?? '',
-                                    email: profileData['Email'] ?? '',
-                                  ),
-                                ),
+                                MaterialPageRoute(builder: (context) => const ManageAccessView()),
                               );
                             },
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              backgroundColor: Colors.blue[900],
-                            ),
-                            icon: const Icon(Icons.edit, color: Colors.white),
-                            label: const Text('Edit Profile', style: TextStyle(fontSize: 16.0, color: Colors.white)),
                           ),
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => const ChangePasswordView()));
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              backgroundColor: Colors.blue[900],
-                            ),
-                            icon: const Icon(Icons.lock, color: Colors.white),
-                            label: const Text('Change Password', style: TextStyle(fontSize: 16.0, color: Colors.white)),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Align(
-                        alignment: Alignment.topRight,
-                        widthFactor: 3.12,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            _showLogoutConfirmationDialog(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
-                          icon: const Icon(Icons.logout, color: Colors.white),
-                          label: const Text(
-                            'Logout',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               );
             }
           },
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              _showLogoutConfirmationDialog(context);
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              backgroundColor: Colors.red,
+            ),
+            icon: const Icon(Icons.logout, color: Colors.white),
+            label: const Text(
+              'Logout',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         ),
       ),
     );
@@ -160,10 +181,58 @@ class _ProfileViewState extends State<ProfileView> {
   Widget _buildProfileItem({required String label, required String value}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        '$label: $value',
-        style: const TextStyle(fontSize: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildButtonRow({required BuildContext context, required List<Widget> buttons}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: buttons,
+    );
+  }
+
+  Widget _buildButtonColumn({required BuildContext context, required List<Widget> buttons}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: buttons
+          .map((button) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: button,
+              ))
+          .toList(),
+    );
+  }
+
+  Widget _buildButton({
+    required BuildContext context,
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        backgroundColor: color,
+      ),
+      icon: Icon(icon, color: Colors.white),
+      label: Text(label, style: const TextStyle(fontSize: 16.0, color: Colors.white)),
     );
   }
 
