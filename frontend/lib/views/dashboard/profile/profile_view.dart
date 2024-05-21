@@ -155,6 +155,7 @@ class _ProfileViewState extends State<ProfileView> {
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.white,
+        elevation: 0.2,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton.icon(
