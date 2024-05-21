@@ -41,4 +41,37 @@ router.get("/logs", requireAuth, (req, res) => {
   });
 });
 
+// Route to get permissions
+router.get("/permissions", requireAuth, (req, res) => {
+  //get permissions
+  UserModel.getPermissions((err, permissions) => {
+    if (err) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    if (!permissions) {
+      return res.status(404).json({ error: "Permissions not found" });
+    }
+
+    // Return user log data
+    res.status(200).json(permissions);
+  });
+});
+
+// Route to update permissions
+router.put("/update-permission", requireAuth, (req, res) => {
+  //update permissions
+  const { permissionID, newPermission } = req.body;
+  
+  // update the permission
+  UserModel.updatePermission(permissionID, newPermission, (err) => {
+    if (err) {
+      return res.status(500).json({ error: "Failed to update permission" });
+    }
+    // Return success message
+    res
+      .status(200)
+      .json({ success: true, message: "Permission changed successfully" });
+  });
+});
+
 module.exports = router;
