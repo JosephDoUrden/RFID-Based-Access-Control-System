@@ -5,6 +5,7 @@ const router = express.Router();
 const UserModel = require("../models/userModel");
 const { requireAuth } = require("../middleware/authMiddleware");
 const bcrypt = require("bcrypt");
+const AuthController = require("../controllers/authController");
 
 // Route to get user profile data
 router.get("/", requireAuth, (req, res) => {
@@ -89,5 +90,8 @@ router.put("/change-password", requireAuth, (req, res) => {
     });
   });
 });
+
+// Route to report an issue
+router.post("/report-issue", AuthController.reportIssue);
 
 module.exports = router;

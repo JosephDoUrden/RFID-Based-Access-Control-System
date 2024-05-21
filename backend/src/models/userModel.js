@@ -165,4 +165,12 @@ UserModel.getUserLogById = (userId, callback) => {
   );
 };
 
+UserModel.getManagerEmail = (roleID, callback) => {
+  connection.query(
+    "SELECT Email FROM user WHERE RoleID = ?",
+    [roleID],
+    callback
+  );
+};
+
 module.exports = UserModel;

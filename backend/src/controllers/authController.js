@@ -140,4 +140,39 @@ function generateRandomCode(length) {
   return code;
 }
 
+// Report an issue
+AuthController.reportIssue = async (req, res) => {
+  const { subject, issue } = req.body;
+
+  try {
+    await UserModel.getUserById(req.userId, (err, user) => {
+      if (err) {
+        console.error("Error:", err);
+        return res.status(404).json({ error: err });
+      }
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+    });
+
+    await UserModel.getManagerEmail(1, (err, results) => {
+      const email = results[0].Email;
+      if (!email) {
+        console.log(
+          "Invalid email - email not found in user data"
+        );
+        res.status(401).send("Invalid email");
+        return;
+      }
+      // Send the report to manager email
+      Mailer.sendReportEmail(email, subject, issue);
+    });
+
+    // Return success response
+    res.status(200).json({ message: "Report sent successfully" });
+  } catch (error) {
+    console.error("Error sending report:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 module.exports = AuthController;

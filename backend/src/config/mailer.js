@@ -8,8 +8,8 @@ const transporter = nodemailer.createTransport({
   port: 465, // SMTP port (default: 587 for TLS)
   secure: true, // Use secure connection (TLS)
   auth: {
-    user: process.env.EMAIL_ADDRESS, // Email address
-    pass: process.env.EMAIL_PASSWORD, // App password
+    user: "yusufhandev@gmail.com", // Email address
+    pass: "wkil gvjb qzcn qhwh", // App password
   },
 });
 
@@ -30,4 +30,21 @@ async function sendResetCodeEmail(email, resetCode) {
   }
 }
 
-module.exports = { sendResetCodeEmail };
+// Function to send reset code email
+async function sendReportEmail(email, subject, issue) {
+  try {
+    // Send email using nodemailer transporter
+    await transporter.sendMail({
+      from: "yusufhandev@gmail.com", // Sender email address
+      to: email, // Recipient email address
+      subject: subject, // Email subject
+      text: issue, // Email body
+    });
+    console.log("Report email sent successfully");
+  } catch (error) {
+    console.error("Error occurred while sending email:", error);
+    throw error;
+  }
+}
+
+module.exports = { sendResetCodeEmail, sendReportEmail };
