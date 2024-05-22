@@ -19,7 +19,7 @@ class DashboardController {
     try {
       final token = await _getToken();
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/dashboard'),
+        Uri.parse('http://195.35.28.226:3000/api/dashboard'),
         headers: <String, String>{
           'Authorization': token,
         },
@@ -40,7 +40,7 @@ class DashboardController {
     try {
       final token = await _getToken();
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/dashboard/logs'),
+        Uri.parse('http://195.35.28.226:3000/api/dashboard/logs'),
         headers: {'Authorization': token},
       );
 

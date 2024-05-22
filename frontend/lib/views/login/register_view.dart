@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:frontend/components/custom_password_field.dart';
-import 'package:frontend/controllers/auth_controller.dart';
-import 'package:frontend/views/login/login_view.dart';
 import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/components/error_message.dart';
+import 'package:frontend/controllers/auth_controller.dart';
+import 'package:frontend/views/login/login_view.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -109,6 +112,7 @@ class _RegisterViewState extends State<RegisterView> {
       _errorMessage = '';
     });
 
+    // Validate if all fields are filled
     if (_usernameController.text.isEmpty ||
         _firstnameController.text.isEmpty ||
         _lastnameController.text.isEmpty ||
@@ -120,6 +124,7 @@ class _RegisterViewState extends State<RegisterView> {
       return;
     }
 
+    // Perform registration
     bool registered = await AuthController.register(
       _usernameController.text,
       _firstnameController.text,
@@ -127,6 +132,10 @@ class _RegisterViewState extends State<RegisterView> {
       _emailController.text,
       _passwordController.text,
     );
+
+    // Handle registration result
+    print("Registration Status: $registered");
+    print("Error Message: ${AuthController.errorMessage}");
 
     if (registered) {
       Navigator.pushReplacement(

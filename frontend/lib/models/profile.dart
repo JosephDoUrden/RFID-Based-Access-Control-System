@@ -4,6 +4,7 @@ class Profile {
   final String firstname;
   final String lastname;
   final String email;
+  final int roleId;
 
   Profile({
     required this.id,
@@ -11,6 +12,7 @@ class Profile {
     required this.firstname,
     required this.lastname,
     required this.email,
+    required this.roleId,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Profile {
       firstname: json['Name'] ?? '',
       lastname: json['Surname'] ?? '',
       email: json['Email'] ?? '',
+      roleId: json['RoleID'],
     );
   }
 
@@ -30,6 +33,7 @@ class Profile {
       'Name': firstname,
       'Surname': lastname,
       'Email': email,
+      'RoleID': roleId,
     };
   }
 }

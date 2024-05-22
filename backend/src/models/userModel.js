@@ -165,4 +165,27 @@ UserModel.getUserLogById = (userId, callback) => {
   );
 };
 
+UserModel.getManagerEmail = (roleID, callback) => {
+  connection.query(
+    "SELECT Email FROM user WHERE RoleID = ?",
+    [roleID],
+    callback
+  );
+};
+
+UserModel.getPermissions = (callback) => {
+  connection.query(
+    "SELECT access_permission.*, user.Username FROM access_permission JOIN user ON access_permission.UserID = user.UserID ",
+    callback
+  );
+};
+
+UserModel.updatePermission = (permissionID, Permission_level, callback) => {
+  connection.query(
+    "UPDATE access_permission SET Permission_level = ? WHERE PermissionID = ?",
+    [Permission_level, permissionID],
+    callback
+  );
+};
+
 module.exports = UserModel;

@@ -13,6 +13,7 @@ class ForgotPasswordView extends StatefulWidget {
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final TextEditingController _emailController = TextEditingController();
   String _errorMessage = '';
+  bool _isSendingResetCode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +58,19 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 style: const TextStyle(color: Colors.white),
                 keyboardType: TextInputType.emailAddress,
                 cursorColor: Colors.white,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: _sendResetCode,
+                onPressed: _isSendingResetCode ? null : _sendResetCode,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
                   shape: RoundedRectangleBorder(
@@ -68,7 +78,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   ),
                   backgroundColor: Colors.white,
                 ),
-                child: Text('Send Reset Code', style: TextStyle(fontSize: 18.0, color: Colors.blue[900])),
+                child: Text(
+                  _isSendingResetCode ? 'Sending...' : 'Send Reset Code',
+                  style: TextStyle(fontSize: 18.0, color: Colors.blue[900]),
+                ),
               ),
               if (_errorMessage.isNotEmpty) ...[
                 const SizedBox(height: 20.0),
@@ -99,14 +112,28 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   void _sendResetCode() async {
     setState(() {
       _errorMessage = '';
+      _isSendingResetCode = true;
     });
 
-    bool codeSent = await AuthController.sendResetCode(_emailController.text);
+    final email = _emailController.text;
+    if (email.isEmpty || !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+      setState(() {
+        _errorMessage = 'Please enter a valid email';
+        _isSendingResetCode = false;
+      });
+      return;
+    }
+
+    bool codeSent = await AuthController.sendResetCode(email);
+    setState(() {
+      _isSendingResetCode = false;
+    });
+
     if (codeSent) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ResetPasswordView(email: _emailController.text),
+          builder: (context) => ResetPasswordView(email: email),
         ),
       );
     } else {

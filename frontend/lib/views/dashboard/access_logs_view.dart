@@ -14,6 +14,7 @@ class AccessLogsView extends StatefulWidget {
 class _AccessLogsViewState extends State<AccessLogsView> {
   String _errorMessage = '';
   List<Log> _logs = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -22,6 +23,9 @@ class _AccessLogsViewState extends State<AccessLogsView> {
   }
 
   Future<void> _fetchLogs() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       List<Log> logs = await DashboardController.fetchLogsData();
       setState(() {
@@ -32,6 +36,10 @@ class _AccessLogsViewState extends State<AccessLogsView> {
       setState(() {
         _errorMessage = 'Error: $error';
       });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -41,6 +49,10 @@ class _AccessLogsViewState extends State<AccessLogsView> {
     var formatter = DateFormat('dd.MM.yyyy HH:mm', 'tr_TR'); // Turkish time format
     String formattedDate = formatter.format(dateTime);
     return formattedDate;
+  }
+
+  Future<void> _refreshLogs() async {
+    await _fetchLogs();
   }
 
   @override
@@ -63,31 +75,34 @@ class _AccessLogsViewState extends State<AccessLogsView> {
                 style: const TextStyle(color: Colors.red),
               ),
             )
-          : _logs.isNotEmpty
-              ? ListView.builder(
-                  itemCount: _logs.length,
-                  itemBuilder: (context, index) {
-                    Log log = _logs[_logs.length - index - 1]; // Start from the last log in the list
-                    String formattedTimestamp = formatTimestamp(log.timeStamp);
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      child: Card(
-                        elevation: 2,
-                        child: ListTile(
-                          title: Text(
-                            'Gate: ${log.gateName}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            'Direction: ${log.direction}\nTime: $formattedTimestamp',
+          : _isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : RefreshIndicator(
+                  onRefresh: _refreshLogs,
+                  child: ListView.builder(
+                    itemCount: _logs.length,
+                    itemBuilder: (context, index) {
+                      Log log = _logs[_logs.length - index - 1]; // Start from the last log in the list
+                      String formattedTimestamp = formatTimestamp(log.timeStamp);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        child: Card(
+                          elevation: 2,
+                          child: ListTile(
+                            title: Text(
+                              'Gate: ${log.gateName}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              'Direction: ${log.direction}\nTime: $formattedTimestamp',
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                )
-              : const Center(
-                  child: CircularProgressIndicator(),
+                      );
+                    },
+                  ),
                 ),
     );
   }
