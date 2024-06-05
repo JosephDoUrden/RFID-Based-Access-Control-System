@@ -34,6 +34,7 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<Map<String, dynamic>>(
@@ -47,11 +48,14 @@ class _ProfileViewState extends State<ProfileView> {
               final profileData = snapshot.data!;
               return SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Card(
                       color: Colors.white,
                       elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -183,15 +187,21 @@ class _ProfileViewState extends State<ProfileView> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          Expanded(
+            flex: 3,
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
           ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 16),
+          Expanded(
+            flex: 5,
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.end,
+            ),
           ),
         ],
       ),
@@ -201,7 +211,9 @@ class _ProfileViewState extends State<ProfileView> {
   Widget _buildButtonRow({required BuildContext context, required List<Widget> buttons}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: buttons,
+      children: buttons.map((button) {
+        return Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0), child: button));
+      }).toList(),
     );
   }
 
@@ -231,6 +243,7 @@ class _ProfileViewState extends State<ProfileView> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         backgroundColor: color,
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
       ),
       icon: Icon(icon, color: Colors.white),
       label: Text(label, style: const TextStyle(fontSize: 16.0, color: Colors.white)),

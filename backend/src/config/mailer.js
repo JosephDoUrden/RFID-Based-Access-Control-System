@@ -8,8 +8,8 @@ const transporter = nodemailer.createTransport({
   port: 465, // SMTP port (default: 587 for TLS)
   secure: true, // Use secure connection (TLS)
   auth: {
-    user: "yusufhandev@gmail.com", // Email address
-    pass: "wkil gvjb qzcn qhwh", // App password
+    user: process.env.EMAIL_ADDRESS, // Email address
+    pass: process.env.EMAIL_PASSWORD, // App password
   },
 });
 
@@ -35,7 +35,7 @@ async function sendReportEmail(email, subject, issue) {
   try {
     // Send email using nodemailer transporter
     await transporter.sendMail({
-      from: "yusufhandev@gmail.com", // Sender email address
+      from: process.env.EMAIL_ADDRESS, // Sender email address
       to: email, // Recipient email address
       subject: subject, // Email subject
       text: issue, // Email body
