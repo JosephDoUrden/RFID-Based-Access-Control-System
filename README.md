@@ -43,12 +43,6 @@ The RFID Based Access Control mobile application is designed to manage and monit
 
 - **MySQL**: Database used for storing user information, access logs, and RFID tag data.
 
-### Prerequisites
-
-- Flutter SDK
-- NodeJS
-- MySQL
-
 ## Contact
 
 If you have any questions, feedback, or would like to connect, feel free to reach out to me.
